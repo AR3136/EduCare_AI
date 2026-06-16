@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Sparkles, Send, HelpCircle, AlertCircle } from 'lucide-react';
 import { CartoonButton } from './Reusables';
+import { API_BASE } from '../config';
 
 const SPARKLE_PHRASES = [
   "Wow! Let's explore together!",
@@ -68,7 +69,7 @@ export default function AITutorPanel({
 
     try {
       // Hit backend API
-      const response = await fetch('/api/ai/tutor', {
+      const response = await fetch(`${API_BASE}/api/ai/tutor`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

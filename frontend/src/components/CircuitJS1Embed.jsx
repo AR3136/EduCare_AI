@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ExternalLink, Info, RotateCcw, Save, Sparkles, CheckCircle2 } from 'lucide-react';
 import { CartoonButton, CartoonCard } from './Reusables';
+import { API_BASE } from '../config';
 
 // CircuitJS1 text schemas encoded in base64/plain format.
 // We load them by passing the plain text in url cct parameter.
@@ -56,7 +57,7 @@ export default function CircuitJS1Embed({ onProgressSaved }) {
 
     try {
       // 1. Fetch current progress
-      const progressRes = await fetch('/stem/progress');
+      const progressRes = await fetch(`${API_BASE}/stem/progress`);
       let currentProgress = { stars: 15, badges: [], completedLessons: [] };
       if (progressRes.ok) {
         currentProgress = await progressRes.json();
@@ -82,7 +83,7 @@ export default function CircuitJS1Embed({ onProgressSaved }) {
       }
 
       // 3. Post to backend
-      const response = await fetch('/stem/progress', {
+      const response = await fetch(`${API_BASE}/stem/progress`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

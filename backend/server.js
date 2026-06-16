@@ -14,7 +14,30 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-app.use(cors());
+// Configure CORS for production environment
+const allowedOrigins = process.env.ALLOWED_ORIGINS 
+  ? process.env.ALLOWED_ORIGINS.split(',') 
+  : ['http://localhost:3000', 'http://localhost:3001'];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps, curl, or server-to-server)
+    if (!origin) return callback(null, true);
+    
+    // Check if origin matches allowed list, ends with .vercel.app (for previews), or if not in production
+    if (
+      process.env.NODE_ENV !== 'production' || 
+      allowedOrigins.includes(origin) || 
+      allowedOrigins.includes('*') ||
+      origin.endsWith('.vercel.app')
+    ) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'), false);
+  },
+  credentials: true
+}));
+
 app.use(express.json());
 
 // Global connection state flag for controllers
@@ -104,6 +127,10 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok', environment: process.env.NODE_ENV || 'development' });
 });
 
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok', database: global.mongoConnected ? 'connected' : 'fallback' });
+});
+
 // Serve Frontend Static files if built
 const frontendBuildPath = path.join(__dirname, '../frontend/dist');
 if (fs.existsSync(frontendBuildPath)) {
@@ -113,11 +140,9 @@ if (fs.existsSync(frontendBuildPath)) {
   });
 }
 
-// Start Server locally if not in Vercel Serverless environment
-if (process.env.NODE_ENV !== 'production') {
-  app.listen(PORT, () => {
-    console.log(`🚀 Modular Server running on port ${PORT}`);
-  });
-}
+// Start Server
+app.listen(PORT, () => {
+  console.log(`🚀 Modular Server running on port ${PORT}`);
+});
 
 export default app;

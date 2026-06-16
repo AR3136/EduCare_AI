@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { ExternalLink, RotateCcw, Save, Sparkles, CheckCircle2, Play, AlertTriangle, ShieldCheck } from 'lucide-react';
 import { CartoonButton, CartoonCard } from './Reusables';
+import { API_BASE } from '../config';
 
 // Predefined CircuitJS1 schemas encoded in Falstad formatting
 const PRESET_CIRCUITS = {
@@ -110,7 +111,7 @@ export default function CircuitSimulator({
 
     try {
       // 1. Fetch current progress
-      const progressRes = await fetch(`/stem/progress?studentId=${studentId}`);
+      const progressRes = await fetch(`${API_BASE}/stem/progress?studentId=${studentId}`);
       let currentProgress = { stars: 15, badges: [], completedLessons: [] };
       if (progressRes.ok) {
         currentProgress = await progressRes.json();
@@ -133,7 +134,7 @@ export default function CircuitSimulator({
       }
 
       // 3. Post updates
-      const response = await fetch('/stem/progress', {
+      const response = await fetch(`${API_BASE}/stem/progress`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

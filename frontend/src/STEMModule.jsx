@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { GraduationCap, ArrowLeft } from 'lucide-react';
 import { Routes, Route, Link, useNavigate, useLocation, useParams } from 'react-router-dom';
+import { API_BASE } from './config';
 
 const Dashboard = React.lazy(() => import('./pages/Dashboard'));
 const LessonPortal = React.lazy(() => import('./pages/LessonPortal'));
@@ -100,11 +101,11 @@ export default function STEMModule({
       try {
         let allLessons = [];
         try {
-          const currRes = await fetch('/stem/curriculum');
+          const currRes = await fetch(`${API_BASE}/stem/curriculum`);
           if (currRes.ok) allLessons = await currRes.json();
         } catch (e) { console.warn('Failed to load curriculum from server'); }
 
-        const response = await fetch(`/stem/progress?studentId=${studentId}`);
+        const response = await fetch(`${API_BASE}/stem/progress?studentId=${studentId}`);
         if (response.ok) {
           const data = await response.json();
           setStars(data.stars || 15);
@@ -142,7 +143,7 @@ export default function STEMModule({
 
   const saveProgressOnServer = async (newStars, newBadges, completedIds, newLevel) => {
     try {
-      const response = await fetch('/stem/progress', {
+      const response = await fetch(`${API_BASE}/stem/progress`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

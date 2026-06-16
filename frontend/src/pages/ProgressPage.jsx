@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Award, Star, BookOpen, Layers, CheckCircle2, ChevronRight, Activity, Calendar } from 'lucide-react';
 import { CartoonButton, CartoonCard, StarTracker } from '../components/Reusables';
+import { API_BASE } from '../config';
 
 export default function ProgressPage({
   studentId = 'default_student',
@@ -17,7 +18,7 @@ export default function ProgressPage({
     async function fetchLatestProgress() {
       setLoading(true);
       try {
-        const response = await fetch(`/stem/progress?studentId=${studentId}`);
+        const response = await fetch(`${API_BASE}/stem/progress?studentId=${studentId}`);
         if (response.ok) {
           const data = await response.json();
           setDbProgress(data);

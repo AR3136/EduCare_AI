@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BookOpen, CheckCircle, Play, ArrowRight } from 'lucide-react';
 import { CartoonButton, CartoonCard } from '../components/Reusables';
+import { API_BASE } from '../config';
 
 export default function LessonsPage({ 
   selectedGrade = 'KG',
@@ -16,7 +17,7 @@ export default function LessonsPage({
     async function fetchLessons() {
       setLoading(true);
       try {
-        const response = await fetch(`/stem/lessons/${encodeURIComponent(selectedGrade)}`);
+        const response = await fetch(`${API_BASE}/stem/lessons/${encodeURIComponent(selectedGrade)}`);
         if (response.ok) {
           const data = await response.json();
           setLessons(data.lessons || []);

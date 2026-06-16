@@ -3,6 +3,7 @@ import { ChevronLeft, Award, Sparkles, Check, ArrowRight, AlertCircle, HelpCircl
 import { CartoonButton, CartoonCard } from '../components/Reusables';
 import CircuitWorkspace from '../components/CircuitWorkspace';
 import AITutorPanel from '../components/AITutorPanel';
+import { API_BASE } from '../config';
 
 export default function LessonPortal({ 
   lesson, 
@@ -21,7 +22,7 @@ export default function LessonPortal({
   const fetchAdaptiveData = async (failures, timeSecs = 0) => {
     setLoading(true);
     try {
-      const response = await fetch('/stem/challenge', {
+      const response = await fetch(`${API_BASE}/stem/challenge`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

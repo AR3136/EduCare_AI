@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkles, Trophy, BookOpen, Star, AlertCircle, Compass, HelpCircle } from 'lucide-react';
 import { CartoonButton, CartoonCard } from './Reusables';
+import { API_BASE } from '../config';
 
 export default function AIRecommendationPanel({
   grade = 'KG',
@@ -21,7 +22,7 @@ export default function AIRecommendationPanel({
       const performanceScore = Math.min(Math.max(Math.round((stars / 40) * 100), 10), 100);
 
       try {
-        const response = await fetch('/stem/recommend', {
+        const response = await fetch(`${API_BASE}/stem/recommend`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
