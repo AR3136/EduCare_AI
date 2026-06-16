@@ -99,6 +99,11 @@ app.post('/api/ai/tutor', (req, res) => {
   res.json({ reply, mood });
 });
 
+// Health Check Endpoint for Production Verification
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'ok', environment: process.env.NODE_ENV || 'development' });
+});
+
 // Serve Frontend Static files if built
 const frontendBuildPath = path.join(__dirname, '../frontend/dist');
 if (fs.existsSync(frontendBuildPath)) {
@@ -108,7 +113,11 @@ if (fs.existsSync(frontendBuildPath)) {
   });
 }
 
-// Start Server
-app.listen(PORT, () => {
-  console.log(`🚀 Modular Server running on port ${PORT}`);
-});
+// Start Server locally if not in Vercel Serverless environment
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`🚀 Modular Server running on port ${PORT}`);
+  });
+}
+
+export default app;

@@ -1,12 +1,81 @@
 import React, { useState, useEffect } from 'react';
 import { GraduationCap, ArrowLeft } from 'lucide-react';
 import { Routes, Route, Link, useNavigate, useLocation, useParams } from 'react-router-dom';
-import Dashboard from './pages/Dashboard';
-import LessonPortal from './pages/LessonPortal';
-import SimulatorPage from './pages/SimulatorPage';
-import LessonsPage from './pages/LessonsPage';
-import RewardsPage from './pages/RewardsPage';
-import ProgressPage from './pages/ProgressPage';
+
+const Dashboard = React.lazy(() => import('./pages/Dashboard'));
+const LessonPortal = React.lazy(() => import('./pages/LessonPortal'));
+const SimulatorPage = React.lazy(() => import('./pages/SimulatorPage'));
+const LessonsPage = React.lazy(() => import('./pages/LessonsPage'));
+const RewardsPage = React.lazy(() => import('./pages/RewardsPage'));
+const ProgressPage = React.lazy(() => import('./pages/ProgressPage'));
+
+// Error Boundary for production robustness
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error("ErrorBoundary caught an error", error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4">
+          <div className="bg-white p-8 rounded-3xl shadow-xl text-center max-w-md border-4 border-rose-200">
+            <h1 className="text-4xl mb-4">⚠️</h1>
+            <h2 className="text-xl font-black text-slate-800 mb-2">Oops! Something went wrong.</h2>
+            <p className="text-sm text-slate-500 mb-6">Our lab encountered a technical glitch.</p>
+            <button onClick={() => window.location.reload()} className="bg-rose-500 text-white px-6 py-2 rounded-xl font-bold">Reload Lab</button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+// Extracted wrapper to fix React Hook rules
+const LessonWrapper = ({ lessons, stars, handleCompleteLesson, navigate }) => {
+  const { id } = useParams();
+  const activeLessonIndex = lessons.findIndex(l => l.id === id);
+  
+  useEffect(() => {
+    if (activeLessonIndex === -1) {
+      const t = setTimeout(() => navigate('/stem'), 2000);
+      return () => clearTimeout(t);
+    }
+  }, [activeLessonIndex, navigate]);
+
+  if (activeLessonIndex === -1) {
+    return (
+      <div className="text-center py-20 font-bold text-slate-400">
+        🎒 Lesson not found! Redirecting to Dashboard...
+      </div>
+    );
+  }
+
+  const activeLesson = lessons[activeLessonIndex];
+  const gradeLessons = lessons.filter(l => l.grade === activeLesson.grade);
+  const gradeIndex = gradeLessons.findIndex(l => l.id === id);
+  const nextLesson = gradeIndex >= 0 && gradeIndex + 1 < gradeLessons.length ? gradeLessons[gradeIndex + 1] : null;
+
+  return (
+    <LessonPortal
+      lesson={activeLesson}
+      nextLessonId={nextLesson ? nextLesson.id : null}
+      stars={stars}
+      onBack={() => navigate('/stem')}
+      onCompleteLesson={handleCompleteLesson}
+    />
+  );
+};
 
 export default function STEMModule({ 
   studentId = 'default_student',
@@ -237,37 +306,7 @@ export default function STEMModule({
 
   const activeGradeLessons = lessons.filter(l => l.grade === selectedGrade);
 
-  // Helper route element wrapper to inject selected lesson into LessonPortal
-  const LessonWrapper = () => {
-    const { id } = useParams();
-    const activeLessonIndex = lessons.findIndex(l => l.id === id);
-    if (activeLessonIndex === -1) {
-      return (
-        <div className="text-center py-20 font-bold text-slate-400">
-          🎒 Lesson not found! Redirecting to Dashboard...
-          {useEffect(() => {
-            const t = setTimeout(() => navigate('/stem'), 2000);
-            return () => clearTimeout(t);
-          }, [])}
-        </div>
-      );
-    }
-
-    const activeLesson = lessons[activeLessonIndex];
-    const gradeLessons = lessons.filter(l => l.grade === activeLesson.grade);
-    const gradeIndex = gradeLessons.findIndex(l => l.id === id);
-    const nextLesson = gradeIndex >= 0 && gradeIndex + 1 < gradeLessons.length ? gradeLessons[gradeIndex + 1] : null;
-
-    return (
-      <LessonPortal
-        lesson={activeLesson}
-        nextLessonId={nextLesson ? nextLesson.id : null}
-        stars={stars}
-        onBack={() => navigate('/stem')}
-        onCompleteLesson={handleCompleteLesson}
-      />
-    );
-  };
+  // Removed LessonWrapper from render scope to resolve eslint hook violation
 
   return (
     <div className="min-h-screen flex flex-col justify-between bg-[#faf8f5]">
@@ -365,57 +404,73 @@ export default function STEMModule({
 
       {/* Pages Router Container */}
       <main className="flex-1 pb-20 md:pb-6">
-        <Routes>
-          <Route path="/" element={
-            <Dashboard
-              selectedGrade={selectedGrade}
-              setSelectedGrade={setSelectedGrade}
-              stars={stars}
-              badges={badges}
-              onStartSimulator={handleStartSimulator}
-              onStartLesson={handleStartLesson}
-              lessons={activeGradeLessons}
-            />
-          } />
+        <ErrorBoundary>
+          <React.Suspense fallback={
+            <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4">
+              <div className="w-12 h-12 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin"></div>
+              <p className="text-sm font-bold text-slate-400 animate-pulse">Loading Lab...</p>
+            </div>
+          }>
+            <Routes>
+              <Route path="/" element={
+                <Dashboard
+                  selectedGrade={selectedGrade}
+                  setSelectedGrade={setSelectedGrade}
+                  stars={stars}
+                  badges={badges}
+                  onStartSimulator={handleStartSimulator}
+                  onStartLesson={handleStartLesson}
+                  lessons={activeGradeLessons}
+                />
+              } />
 
-          <Route path="/lessons" element={
-            <LessonsPage
-              selectedGrade={selectedGrade}
-              stars={stars}
-              completedLessons={lessons.filter(l => l.completed).map(l => l.id)}
-            />
-          } />
+              <Route path="/lessons" element={
+                <LessonsPage
+                  selectedGrade={selectedGrade}
+                  stars={stars}
+                  completedLessons={lessons.filter(l => l.completed).map(l => l.id)}
+                />
+              } />
 
-          <Route path="/lessons/:id" element={<LessonWrapper />} />
+              <Route path="/lessons/:id" element={
+                <LessonWrapper 
+                  lessons={lessons} 
+                  stars={stars} 
+                  handleCompleteLesson={handleCompleteLesson} 
+                  navigate={navigate} 
+                />
+              } />
 
-          <Route path="/simulator" element={
-            <SimulatorPage
-              onBack={() => navigate('/stem')}
-              grade={selectedGrade}
-              onProgressSaved={handleProgressSaved}
-            />
-          } />
+              <Route path="/simulator" element={
+                <SimulatorPage
+                  onBack={() => navigate('/stem')}
+                  grade={selectedGrade}
+                  onProgressSaved={handleProgressSaved}
+                />
+              } />
 
-          <Route path="/rewards" element={
-            <RewardsPage
-              stars={stars}
-              badges={badges}
-              level={level}
-              completedLessons={lessons.filter(l => l.completed).map(l => l.id)}
-            />
-          } />
+              <Route path="/rewards" element={
+                <RewardsPage
+                  stars={stars}
+                  badges={badges}
+                  level={level}
+                  completedLessons={lessons.filter(l => l.completed).map(l => l.id)}
+                />
+              } />
 
-          <Route path="/progress" element={
-            <ProgressPage
-              studentId={studentId}
-              stars={stars}
-              level={level}
-              badges={badges}
-              completedLessons={lessons.filter(l => l.completed).map(l => l.id)}
-              selectedGrade={selectedGrade}
-            />
-          } />
-        </Routes>
+              <Route path="/progress" element={
+                <ProgressPage
+                  studentId={studentId}
+                  stars={stars}
+                  level={level}
+                  badges={badges}
+                  completedLessons={lessons.filter(l => l.completed).map(l => l.id)}
+                  selectedGrade={selectedGrade}
+                />
+              } />
+            </Routes>
+          </React.Suspense>
+        </ErrorBoundary>
       </main>
 
       {/* Responsive Mobile Bottom Navigation Menu */}
