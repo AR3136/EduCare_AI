@@ -1,0 +1,81 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "STEMLearningEngineContract",
+  "description": "JSON Contract Schema for the EduCare AI STEM & Circuit Simulator Adaptive Learning Engine.",
+  "type": "object",
+  "definitions": {
+    "Lesson": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "grade": { "type": "string" },
+        "icon": { "type": "string" },
+        "title": { "type": "string" },
+        "topic": { "type": "string" },
+        "description": { "type": "string" },
+        "vocab": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["id", "grade", "title", "topic", "description"]
+    },
+    "Challenge": {
+      "type": "object",
+      "properties": {
+        "challengeInstructions": { "type": "string" },
+        "circuitConfig": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "targetConditions": {
+          "type": "object",
+          "additionalProperties": { "type": "boolean" }
+        }
+      },
+      "required": ["challengeInstructions", "circuitConfig", "targetConditions"]
+    }
+  },
+  "properties": {
+    "input": {
+      "type": "object",
+      "properties": {
+        "grade": {
+          "type": "string",
+          "enum": ["KG", "Grade 1", "Grade 2", "Grade 3", "Grade 4"]
+        },
+        "performanceScore": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 100
+        },
+        "previousLessons": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "completedCircuits": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["grade", "performanceScore", "previousLessons", "completedCircuits"]
+    },
+    "output": {
+      "type": "object",
+      "properties": {
+        "recommendedLesson": { "$ref": "#/definitions/Lesson" },
+        "recommendedChallenge": { "$ref": "#/definitions/Challenge" },
+        "hintLevel": {
+          "type": "string",
+          "enum": ["none", "basic", "detailed"]
+        },
+        "difficultyLevel": {
+          "type": "string",
+          "enum": ["standard", "advanced", "supportive"]
+        },
+        "adaptiveTip": { "type": "string" }
+      },
+      "required": ["recommendedLesson", "recommendedChallenge", "hintLevel", "difficultyLevel", "adaptiveTip"]
+    }
+  }
+}
