@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { GraduationCap, ArrowLeft } from 'lucide-react';
 import { Routes, Route, Link, useNavigate, useLocation, useParams } from 'react-router-dom';
 import { API_BASE } from './config';
+import { eventBus } from './shared/eventBus';
 
 const Dashboard = React.lazy(() => import('./pages/Dashboard'));
 const LessonPortal = React.lazy(() => import('./pages/LessonPortal'));
@@ -242,6 +243,13 @@ export default function STEMModule({
     // 6. Save to database
     saveProgressOnServer(newStars, newBadges, completedIds, calculatedLevel);
 
+    // Emit event on frontend event bus
+    eventBus.publish('STEM_SESSION_COMPLETED', {
+      studentId,
+      grade: selectedGrade,
+      sourceModule: 'STEM_APP'
+    });
+
     // 7. Trigger overlays
     if (levelIncreased) {
       setLevelUpData({ oldLevel, newLevel: calculatedLevel });
@@ -292,6 +300,13 @@ export default function STEMModule({
 
     setBadges(updatedBadges);
     saveProgressOnServer(newStars, updatedBadges, newLessons, calculatedLevel);
+
+    // Emit event on frontend event bus
+    eventBus.publish('STEM_SESSION_COMPLETED', {
+      studentId,
+      grade: selectedGrade,
+      sourceModule: 'STEM_APP'
+    });
 
     if (levelIncreased) {
       setLevelUpData({ oldLevel, newLevel: calculatedLevel });

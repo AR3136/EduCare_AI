@@ -7,6 +7,7 @@ import fs from 'fs';
 
 // Import routers & engines
 import stemRouter from './routes/stem.js';
+import activityRouter from './modules/physical-activity/routes/activity.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -62,6 +63,7 @@ mongoose.connect(MONGODB_URI, {
 // Mount modular API routers
 app.use('/stem', stemRouter);
 app.use('/api', stemRouter); // Backwards compatibility mount
+app.use('/activity', activityRouter);
 
 // POST AI TUTOR (Heuristic chat companion Sparky Node)
 app.post('/api/ai/tutor', (req, res) => {

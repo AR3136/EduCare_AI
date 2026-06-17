@@ -1,18 +1,19 @@
 {
-  "stars": 40,
+  "stars": 35,
   "badges": [
-    "spark_starter",
     "junior_engineer",
-    "stem_explorer",
-    "resistor_shield"
+    "circuit_master"
   ],
   "completedLessons": [
-    "lesson-kg-1",
-    "lesson-kg-3",
-    "lesson-g4-1",
-    "lesson-g4-2"
+    "lesson-g2-std",
+    "lesson-g2-adv",
+    "sim_preset_OPEN_CLOSED"
   ],
-  "grade": "Grade 4",
+  "completedCircuits": [
+    "circ-1",
+    "circ-2"
+  ],
+  "grade": "Grade 2",
   "level": 1,
-  "readinessScore": 0
+  "readinessScore": 100
 }

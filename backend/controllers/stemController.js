@@ -221,8 +221,7 @@ export const getRecommendationRoute = (req, res) => {
 
 // Internal helpers
 function mongooseConnectionActive() {
-  return fs.readFileSync(path.join(__dirname, '../server.js'), 'utf8').includes('useMongoDB = true') && 
-         global.mongoConnected === true;
+  return global.mongoConnected === true;
 }
 
 function getRankDescription(stars) {

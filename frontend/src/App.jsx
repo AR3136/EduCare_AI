@@ -1,11 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sparkles, Trophy, Settings, GraduationCap, Compass, BookOpen, Star, Award, LogOut, CheckCircle } from 'lucide-react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import STEMModule from './STEMModule';
+import PhysicalActivityModule from './PhysicalActivityModule';
+import ParentActivityReport from './components/ParentActivityReport';
+import TeacherActivityAnalytics from './components/TeacherActivityAnalytics';
 import { CartoonButton, CartoonCard } from './components/Reusables';
+import { eventBus } from './shared/eventBus';
+import { API_BASE } from './config';
 
 export default function App() {
   const navigate = useNavigate();
+  
+  // Dashboard view toggle: 'parent' | 'teacher'
+  const [dashboardView, setDashboardView] = useState('parent');
   
   // Parent dashboard state synchronized from sub-modules
   const [parentStats, setParentStats] = useState({
@@ -18,7 +26,6 @@ export default function App() {
   const [notification, setNotification] = useState(null);
 
   const handleSTEMProgressUpdate = (progressData) => {
-    // Parent receives progress updates from independent modular STEMModule
     setParentStats({
       stars: progressData.stars,
       level: progressData.level,
@@ -26,8 +33,15 @@ export default function App() {
       readinessScore: progressData.readinessScore
     });
 
-    // Display a parent notification sync alert banner
     showNotification(`🔄 Parent Dashboard Synchronized: Readiness is now ${progressData.readinessScore}%! Earned ${progressData.stars} total stars.`);
+  };
+
+  const handlePhysicalActivityProgressUpdate = (progressData) => {
+    setParentStats(prev => ({
+      ...prev,
+      stars: progressData.stars
+    }));
+    showNotification(`🔄 Physical Activity Synchronized: Earned ${progressData.stars} total stars!`);
   };
 
   const showNotification = (message) => {
@@ -36,6 +50,83 @@ export default function App() {
       setNotification(null);
     }, 5000);
   };
+
+  // Listen to Cross Application Event triggers
+  useEffect(() => {
+    // Listen for automatic break assignment
+    const unsubscribeAssign = eventBus.subscribe('PHYSICAL_ACTIVITY_ASSIGNMENT', (data) => {
+      console.log('📬 [App] Captured PHYSICAL_ACTIVITY_ASSIGNMENT trigger:', data);
+      showNotification(`🏃‍♂️ Physical Break Assigned! Launching break lab...`);
+      // Redirect to physical break routing portal
+      navigate('/physical-activity');
+    });
+
+    // Listen for completed break to route back to origin app
+    const unsubscribeComplete = eventBus.subscribe('ACTIVITY_COMPLETED', (data) => {
+      console.log('📬 [App] Captured ACTIVITY_COMPLETED event:', data);
+      showNotification(`🎉 Break completed! Returning to study workspace.`);
+      if (data.sourceModule === 'STEM_APP') {
+        navigate('/stem');
+      } else {
+        navigate('/');
+      }
+    });
+
+    // Listen for skipped break to route back to origin app
+    const unsubscribeSkip = eventBus.subscribe('ACTIVITY_SKIPPED', (data) => {
+      console.log('📬 [App] Captured ACTIVITY_SKIPPED event:', data);
+      showNotification(`⚠️ Break skipped. Returning to study workspace.`);
+      if (data.sourceModule === 'STEM_APP') {
+        navigate('/stem');
+      } else {
+        navigate('/');
+      }
+    });
+
+    // Wildcard-like listeners for session completions across all subjects
+    const handleSessionCompleted = async (data) => {
+      console.log('📬 [App] Captured session completion event:', data);
+      try {
+        const response = await fetch(`${API_BASE}/activity/assign`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            studentId: data.studentId,
+            grade: data.grade || 'Grade 2',
+            sourceModule: data.sourceModule || 'STEM_APP'
+          })
+        });
+        if (response.ok) {
+          const resData = await response.json();
+          // Publish PHYSICAL_ACTIVITY_ASSIGNMENT to trigger navigation and load the break session
+          eventBus.publish('PHYSICAL_ACTIVITY_ASSIGNMENT', {
+            studentId: data.studentId,
+            sessionId: resData.sessionId,
+            activityId: resData.activityId,
+            sourceModule: data.sourceModule || 'STEM_APP',
+            activityDetail: resData.nextRecommendedActivity
+          });
+        }
+      } catch (err) {
+        console.error('Failed to auto-assign physical break:', err);
+      }
+    };
+
+    const unsubscribeStem = eventBus.subscribe('STEM_SESSION_COMPLETED', handleSessionCompleted);
+    const unsubscribeMath = eventBus.subscribe('MATH_SESSION_COMPLETED', handleSessionCompleted);
+    const unsubscribeEnglish = eventBus.subscribe('ENGLISH_SESSION_COMPLETED', handleSessionCompleted);
+    const unsubscribeLogic = eventBus.subscribe('LOGIC_SESSION_COMPLETED', handleSessionCompleted);
+
+    return () => {
+      unsubscribeAssign();
+      unsubscribeComplete();
+      unsubscribeSkip();
+      unsubscribeStem();
+      unsubscribeMath();
+      unsubscribeEnglish();
+      unsubscribeLogic();
+    };
+  }, [navigate]);
 
   return (
     <div className="min-h-screen bg-[#fcfaf7] text-slate-800 font-sans selection:bg-indigo-100 flex flex-col justify-between">
@@ -52,7 +143,7 @@ export default function App() {
         {/* Parent Home Dashboard */}
         <Route path="/" element={
           <>
-            {/* Main Parent Header */}
+            {/* Main Parent/Teacher Header */}
             <header className="glass border-b-4 border-slate-800 py-4 px-6 shadow-sm sticky top-0 z-40">
               <div className="max-w-7xl mx-auto flex items-center justify-between">
                 
@@ -69,6 +160,30 @@ export default function App() {
                       Unified Learning Hub
                     </p>
                   </div>
+                </div>
+
+                {/* Dashboard View Switcher */}
+                <div className="flex gap-2">
+                  <button 
+                    onClick={() => setDashboardView('parent')}
+                    className={`px-4 py-1.5 rounded-xl font-black text-xs border-2 shadow-cartoon transition-all hover:scale-102 active:scale-98 ${
+                      dashboardView === 'parent' 
+                        ? 'bg-indigo-600 text-white border-slate-800' 
+                        : 'bg-white text-slate-600 border-slate-205 hover:bg-slate-50'
+                    }`}
+                  >
+                    Parent Hub 🏠
+                  </button>
+                  <button 
+                    onClick={() => setDashboardView('teacher')}
+                    className={`px-4 py-1.5 rounded-xl font-black text-xs border-2 shadow-cartoon transition-all hover:scale-102 active:scale-98 ${
+                      dashboardView === 'teacher' 
+                        ? 'bg-purple-600 text-white border-slate-800' 
+                        : 'bg-white text-slate-600 border-slate-205 hover:bg-slate-50'
+                    }`}
+                  >
+                    Teacher Hub 🎓
+                  </button>
                 </div>
 
                 {/* Stats Summary */}
@@ -136,7 +251,7 @@ export default function App() {
                   <BookOpen className="w-6 h-6 text-indigo-500" /> AI Classrooms & Labs
                 </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                   
                   {/* 1. STEM & CIRCUITS PORTAL (Active) */}
                   <CartoonCard color="white" className="flex flex-col justify-between h-64 border-l-8 border-l-orange-400 shadow-cartoon hover:shadow-cartoon-hover hover:scale-102 transition-all group">
@@ -208,7 +323,44 @@ export default function App() {
                     </CartoonButton>
                   </CartoonCard>
 
+                  {/* 4. PHYSICAL ACTIVITY PORTAL (Active) */}
+                  <CartoonCard color="white" className="flex flex-col justify-between h-64 border-l-8 border-l-indigo-400 shadow-cartoon hover:shadow-cartoon-hover hover:scale-102 transition-all group">
+                    <div>
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="text-3xl">🏃‍♂️</span>
+                        <span className="text-[10px] bg-indigo-100 border border-indigo-300 text-indigo-800 px-2.5 py-0.5 rounded-full font-bold">
+                          ACTIVE PORTAL
+                        </span>
+                      </div>
+                      <h4 className="font-extrabold text-lg text-slate-800 group-hover:text-indigo-500 transition-colors leading-snug">
+                        Physical Activity Lab
+                      </h4>
+                      <p className="text-xs text-slate-500 font-semibold mt-1.5 leading-relaxed">
+                        Follow guided physical exercise, yoga, stretching, and coordination breaks. Integrated with academic learning telemetry and stars rewards!
+                      </p>
+                    </div>
+                    <CartoonButton 
+                      color="science" 
+                      onClick={() => {
+                        navigate('/physical-activity');
+                        showNotification("🏃‍♂️ Loaded Physical Activity break workspace!");
+                      }}
+                      className="w-full"
+                    >
+                      Enter Activity Lab 🚀
+                    </CartoonButton>
+                  </CartoonCard>
+
                 </div>
+              </div>
+
+              {/* Conditional Dashboards Rendering */}
+              <div className="pt-4 border-t-2 border-slate-150">
+                {dashboardView === 'parent' ? (
+                  <ParentActivityReport studentId="student_123" />
+                ) : (
+                  <TeacherActivityAnalytics />
+                )}
               </div>
 
             </main>
@@ -235,6 +387,18 @@ export default function App() {
           <STEMModule 
             studentId="student_123"
             onProgressUpdate={handleSTEMProgressUpdate}
+            onExit={() => {
+              navigate('/');
+              showNotification("🏠 Returned to Parent Hub Dashboard.");
+            }}
+          />
+        } />
+
+        {/* Physical Activity Modular Routing Subtree */}
+        <Route path="/physical-activity/*" element={
+          <PhysicalActivityModule 
+            studentId="student_123"
+            onProgressUpdate={handlePhysicalActivityProgressUpdate}
             onExit={() => {
               navigate('/');
               showNotification("🏠 Returned to Parent Hub Dashboard.");
