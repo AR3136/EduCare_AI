@@ -15,6 +15,11 @@ import {
   getRewardsList
 } from '../controllers/activityController.js';
 
+import {
+  chatWithFitFriend,
+  skipFitFriendActivity
+} from '../controllers/fitFriendController.js';
+
 const router = express.Router();
 
 // Lifecycle Mutation Endpoints
@@ -23,6 +28,10 @@ router.post('/start', startActivity);
 router.post('/complete', completeActivity);
 router.post('/skip', skipActivity);
 router.post('/instructor-recommend', recommendForInstructor);
+
+// FitFriend AI Chatbot Endpoints
+router.post('/fitfriend/chat', chatWithFitFriend);
+router.post('/fitfriend/skip', skipFitFriendActivity);
 
 // Query / Analytics Endpoints
 router.get('/history', getHistory);

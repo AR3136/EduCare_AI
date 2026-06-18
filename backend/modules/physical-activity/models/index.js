@@ -29,6 +29,7 @@ export { default as ActivitySessionModel }   from './ActivitySession.js';
 export { default as ActivitySkipModel }      from './ActivitySkip.js';
 export { default as ActivityRewardModel }    from './ActivityReward.js';
 export { default as ActivityAnalyticsModel } from './ActivityAnalytics.js';
+export { default as FitFriendChatModel }      from './FitFriendChat.js';
 
 // ── Enum Constants ────────────────────────────────────────────
 export { SOURCE_MODULES, ACTIVITY_CATEGORIES, GRADE_LEVELS, MOOD_TAGS } from './Activity.js';

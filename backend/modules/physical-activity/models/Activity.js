@@ -19,11 +19,12 @@ const { Schema } = mongoose;
 
 // ─── Enum Constants (exported for reuse in other models) ─────
 export const SOURCE_MODULES = Object.freeze({
-  ENGLISH_APP: 'ENGLISH_APP',
-  MATH_APP:    'MATH_APP',
-  STEM_APP:    'STEM_APP',
-  LOGIC_APP:   'LOGIC_APP',
-  AI_TUTOR:    'AI_TUTOR',
+  ENGLISH_APP:  'ENGLISH_APP',
+  MATH_APP:     'MATH_APP',
+  STEM_APP:     'STEM_APP',
+  LOGIC_APP:    'LOGIC_APP',
+  AI_TUTOR:     'AI_TUTOR',
+  FITFRIEND_AI: 'FITFRIEND_AI',
 });
 
 export const ACTIVITY_CATEGORIES = Object.freeze([

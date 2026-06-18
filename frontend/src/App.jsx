@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Sparkles, Trophy, Settings, GraduationCap, Compass, BookOpen, Star, Award, LogOut, CheckCircle } from 'lucide-react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import STEMModule from './STEMModule';
 import PhysicalActivityModule from './PhysicalActivityModule';
 import ParentActivityReport from './components/ParentActivityReport';
@@ -8,9 +8,12 @@ import TeacherActivityAnalytics from './components/TeacherActivityAnalytics';
 import { CartoonButton, CartoonCard } from './components/Reusables';
 import { eventBus } from './shared/eventBus';
 import { API_BASE } from './config';
+import AITutorPanel from './components/AITutorPanel';
+import FitFriendPanel from './components/FitFriendPanel';
 
 export default function App() {
   const navigate = useNavigate();
+  const location = useLocation();
   
   // Dashboard view toggle: 'parent' | 'teacher'
   const [dashboardView, setDashboardView] = useState('parent');
@@ -406,6 +409,16 @@ export default function App() {
           />
         } />
       </Routes>
+
+      {/* Floating AI Panels */}
+      {location.pathname.startsWith('/stem') && 
+       !location.pathname.startsWith('/stem/simulator') && 
+       !location.pathname.includes('/stem/lessons/') && (
+        <AITutorPanel floating={true} studentId="student_123" grade="Grade 2" />
+      )}
+      {location.pathname.startsWith('/physical-activity') && (
+        <FitFriendPanel floating={true} studentId="student_123" grade="Grade 2" />
+      )}
     </div>
   );
 }

@@ -79,8 +79,9 @@ export default function TeacherActivityAnalytics() {
   const getBadgeEmoji = (badgeId) => {
     if (badgeId === 'badge_movement_master') return '🏃‍♂️';
     if (badgeId === 'badge_energy_hero') return '⚡';
-    if (badgeId === 'badge_fitness_explorer') return '🧭';
-    if (badgeId === 'badge_focus_champion') return '🧠';
+    if (badgeId === 'badge_fitness_explorer' || badgeId === 'badge_fitfriend_explorer') return '🧭';
+    if (badgeId === 'badge_focus_champion' || badgeId === 'badge_focus_hero') return '🧠';
+    if (badgeId === 'badge_fitness_champion') return '🥇';
     return '🏆';
   };
 
@@ -88,7 +89,10 @@ export default function TeacherActivityAnalytics() {
     if (badgeId === 'badge_movement_master') return 'Movement Master';
     if (badgeId === 'badge_energy_hero') return 'Energy Hero';
     if (badgeId === 'badge_fitness_explorer') return 'Fitness Explorer';
+    if (badgeId === 'badge_fitfriend_explorer') return 'FitFriend Explorer';
     if (badgeId === 'badge_focus_champion') return 'Focus Champion';
+    if (badgeId === 'badge_focus_hero') return 'Focus Hero';
+    if (badgeId === 'badge_fitness_champion') return 'Fitness Champion';
     return 'Badge';
   };
 

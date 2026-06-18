@@ -442,6 +442,14 @@ const checkAndAwardBadges = async (studentId, grade, sourceModule, db, isLocal) 
       }
     },
     {
+      id: 'badge_fitfriend_explorer',
+      label: 'FitFriend Explorer',
+      icon: '🧭',
+      check: (sessions) => {
+        return sessions.some(s => s.sourceModule === 'FITFRIEND_AI') || sessions.length >= 1;
+      }
+    },
+    {
       id: 'badge_focus_champion',
       label: 'Focus Champion',
       icon: '🧠',
@@ -452,6 +460,24 @@ const checkAndAwardBadges = async (studentId, grade, sourceModule, db, isLocal) 
         }).length;
         return focusCount >= 2;
       }
+    },
+    {
+      id: 'badge_focus_hero',
+      label: 'Focus Hero',
+      icon: '🧠',
+      check: (sessions) => {
+        const focusCount = sessions.filter(s => {
+          const act = activityMap[s.activityId];
+          return act && (act.category === 'mindfulness' || act.category === 'yoga' || act.category === 'focus' || act.category === 'brain_gym');
+        }).length;
+        return focusCount >= 3;
+      }
+    },
+    {
+      id: 'badge_fitness_champion',
+      label: 'Fitness Champion',
+      icon: '🥇',
+      check: (sessions) => sessions.length >= 5
     }
   ];
 
@@ -1698,6 +1724,22 @@ export const getParentReport = async (req, res) => {
     });
   }
 
+  // Alert A2: 10 Consecutive Skips (Excessive Skip Alert)
+  if (consecutiveSkips >= 10) {
+    alerts.push({
+      type: "EXCESSIVE_SKIP_ALERT",
+      title: "Excessive Activity Skips!",
+      message: `Your child has consecutively skipped ${consecutiveSkips} activity breaks. FitFriend recommends introducing fun movement games to re-engage.`,
+      severity: "critical"
+    });
+    eventBus.publish('PARENT_ALERT_GENERATED', {
+      studentId,
+      alertType: 'EXCESSIVE_SKIP_ALERT',
+      message: `EXCESSIVE_SKIP_ALERT: Student has skipped ${consecutiveSkips} activities consecutively.`,
+      severity: 'critical'
+    });
+  }
+
   // Alert B: Low Activity Participation
   if (totalActivities >= 3 && completionRate < 0.30) {
     alerts.push({
@@ -1711,6 +1753,22 @@ export const getParentReport = async (req, res) => {
       alertType: 'LOW_PARTICIPATION',
       message: `Low Activity Participation: ${Math.round(completionRate * 100)}%`,
       severity: 'warning'
+    });
+  }
+
+  // Alert B2: Very Low Activity Level (Low Activity Alert)
+  if (totalActivities >= 5 && completionRate < 0.15) {
+    alerts.push({
+      type: "LOW_ACTIVITY_ALERT",
+      title: "Low Activity Warning",
+      message: `Very low activity level detected (only ${Math.round(completionRate * 100)}% completed). A daily stretch routine is highly recommended.`,
+      severity: "critical"
+    });
+    eventBus.publish('PARENT_ALERT_GENERATED', {
+      studentId,
+      alertType: 'LOW_ACTIVITY_ALERT',
+      message: `LOW_ACTIVITY_ALERT: Very low activity level detected: ${Math.round(completionRate * 100)}%`,
+      severity: 'critical'
     });
   }
 

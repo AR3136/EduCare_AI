@@ -46,6 +46,17 @@ export default function AITutorPanel({
     ]);
   }, [context, grade]);
 
+  // Listen for redirection event from FitFriend AI
+  useEffect(() => {
+    const handleOpenSparky = () => {
+      setIsOpen(true);
+    };
+    window.addEventListener('educare_open_sparky', handleOpenSparky);
+    return () => {
+      window.removeEventListener('educare_open_sparky', handleOpenSparky);
+    };
+  }, []);
+
   // Scroll to bottom when messages change
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
