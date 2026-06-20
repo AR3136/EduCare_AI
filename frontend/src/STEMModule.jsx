@@ -86,7 +86,26 @@ export default function STEMModule({
 }) {
   const navigate = useNavigate();
   const location = useLocation();
-  const [selectedGrade, setSelectedGrade] = useState('KG');
+  const [selectedGrade, setSelectedGrade] = useState(() => {
+    return localStorage.getItem(`educare_grade_${studentId}`) || 'KG';
+  });
+
+  // Keep selectedGrade in sync with localStorage and trigger eventBus
+  useEffect(() => {
+    localStorage.setItem(`educare_grade_${studentId}`, selectedGrade);
+    eventBus.publish('GRADE_CHANGED', { grade: selectedGrade });
+  }, [selectedGrade, studentId]);
+
+  // Listen to external grade changes from other labs/companion
+  useEffect(() => {
+    const unsubscribe = eventBus.subscribe('GRADE_CHANGED', (payload) => {
+      if (payload && payload.grade && payload.grade !== selectedGrade) {
+        setSelectedGrade(payload.grade);
+      }
+    });
+    return unsubscribe;
+  }, [selectedGrade]);
+
   const [stars, setStars] = useState(15);
   const [badges, setBadges] = useState([]);
   const [level, setLevel] = useState(1);

@@ -1,39 +1,41 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Sparkles, Send, HelpCircle, AlertCircle } from 'lucide-react';
+import { Sparkles, Send, HelpCircle, AlertTriangle, Lightbulb, Wrench, CheckCircle } from 'lucide-react';
 import { CartoonButton } from './Reusables';
 import { API_BASE } from '../config';
+import { eventBus } from '../shared/eventBus';
 
 const SPARKLE_PHRASES = [
-  "Wow! Let's explore together!",
-  "Electricity is like a flowing river of tiny stars!",
-  "Make sure all your puzzle pieces are connected!",
-  "Don't worry, even scientists make mistakes. Let's try again!",
-  "You're doing super! Ask me anything!",
+  "Engineers solve problems!",
+  "Let's debug this circuit together ⚡",
+  "Think like an inventor!",
+  "Every mistake is a learning step.",
+  "Check your connections!",
 ];
 
 export default function AITutorPanel({ 
   grade = 'KG', 
-  context = 'dashboard', // dashboard, simulator, lesson-1, etc.
-  currentCircuit = null, // details of the currently built circuit
-  onUseHint = null, // callback for hints
-  floating = false
+  context = 'dashboard', 
+  currentCircuit = null, 
+  onUseHint = null, 
+  floating = false,
+  studentId = 'student_123'
 }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
-  const [tutorMood, setTutorMood] = useState('happy'); // happy, thinking, excited, puzzled
+  const [tutorMood, setTutorMood] = useState('happy');
   const [isOpen, setIsOpen] = useState(false);
   const messagesEndRef = useRef(null);
 
   // Set initial welcome message depending on context and grade
   useEffect(() => {
-    let welcomeText = `Hi there! I'm **Sparky ** your AI Science Buddy! ⚡ `;
+    let welcomeText = `Hi there! I'm **Sparky**, your STEM Simulation Assistant! ⚡ `;
     if (context === 'dashboard') {
-      welcomeText += `Pick a grade or click **Start Circuit Simulator** to begin building! What would you like to explore first?`;
+      welcomeText += `Pick a grade or click **Start Circuit Simulator** to begin building! Let's explore some engineering concepts.`;
     } else if (context.startsWith('lesson')) {
-      welcomeText += `Ready for today's mission? Let's read the instructions and construct a circuit to complete the challenge! Click "Give me a hint" if you get stuck.`;
+      welcomeText += `Ready for today's engineering challenge? Construct a circuit to complete the mission! Ask me to 'debug' or 'give a hint' if you get stuck.`;
     } else {
-      welcomeText += `Welcome to the Sandbox! Drag components onto the grid, wire them up, and toggle the switch. Ask me what happens when you change parts!`;
+      welcomeText += `Welcome to the Sandbox! Drag components onto the grid. If it's not working, click 'Debug Circuit' and we'll troubleshoot it!`;
     }
 
     setMessages([
@@ -41,20 +43,21 @@ export default function AITutorPanel({
         id: 1,
         sender: 'sparky',
         text: welcomeText,
+        isStructured: false,
         timestamp: new Date()
       }
     ]);
-  }, [context, grade]);
 
-  // Listen for redirection event from FitFriend AI
+    // Fire Session Started Event
+    eventBus.publish('SPARKY_SESSION_STARTED', { studentId, grade, context });
+
+  }, [context, grade, studentId]);
+
+  // Listen for redirection event from FitFriend AI or general open
   useEffect(() => {
-    const handleOpenSparky = () => {
-      setIsOpen(true);
-    };
+    const handleOpenSparky = () => setIsOpen(true);
     window.addEventListener('educare_open_sparky', handleOpenSparky);
-    return () => {
-      window.removeEventListener('educare_open_sparky', handleOpenSparky);
-    };
+    return () => window.removeEventListener('educare_open_sparky', handleOpenSparky);
   }, []);
 
   // Scroll to bottom when messages change
@@ -66,20 +69,25 @@ export default function AITutorPanel({
     const queryText = textToSend || input;
     if (!queryText.trim()) return;
 
-    // Add user message
+    // Fire Hint Requested if they click a quick button for hint
+    if (queryText.toLowerCase().includes('hint') || queryText.toLowerCase().includes('debug')) {
+      eventBus.publish('HINT_REQUESTED', { studentId, queryText, circuit: currentCircuit });
+    }
+
     const userMsg = {
       id: Date.now(),
       sender: 'user',
       text: queryText,
+      isStructured: false,
       timestamp: new Date()
     };
+    
     setMessages(prev => [...prev, userMsg]);
     setInput('');
     setLoading(true);
     setTutorMood('thinking');
 
     try {
-      // Hit backend API
       const response = await fetch(`${API_BASE}/api/ai/tutor`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -87,75 +95,140 @@ export default function AITutorPanel({
           message: queryText,
           grade,
           context,
-          circuit: currentCircuit
+          circuit: currentCircuit,
+          performanceScore: 70 // Mocked telemetry
         })
       });
 
       if (response.ok) {
         const data = await response.json();
+        
+        // Check if structured reply
+        const isStructured = typeof data.reply === 'object' && data.reply !== null;
+        
         setMessages(prev => [...prev, {
           id: Date.now() + 1,
           sender: 'sparky',
-          text: data.reply,
+          text: isStructured ? '' : data.reply,
+          structuredData: isStructured ? data.reply : null,
+          isStructured,
           timestamp: new Date()
         }]);
         setTutorMood(data.mood || 'happy');
+
+        // Fire Events based on response
+        if (isStructured) {
+          if (data.reply.problemAnalysis && data.reply.problemAnalysis.toLowerCase().includes('open') || data.reply.problemAnalysis.toLowerCase().includes('missing')) {
+             eventBus.publish('SPARKY_ERROR_DETECTED', { studentId, error: data.reply.problemAnalysis });
+          } else {
+             eventBus.publish('SPARKY_HINT_GIVEN', { studentId, hint: data.reply.fixSteps });
+          }
+        }
       } else {
         throw new Error('Server offline');
       }
     } catch (err) {
-      // Fallback local engine for offline testing
-      setTimeout(() => {
-        const reply = getFallbackReply(queryText, grade, context, currentCircuit);
-        setMessages(prev => [...prev, {
-          id: Date.now() + 1,
-          sender: 'sparky',
-          text: reply,
-          timestamp: new Date()
-        }]);
-        setTutorMood('excited');
-      }, 1000);
+      // Fallback
+      setMessages(prev => [...prev, {
+        id: Date.now() + 1,
+        sender: 'sparky',
+        text: "I am having trouble connecting to my engineering database right now. Please check your circuit connections!",
+        isStructured: false,
+        timestamp: new Date()
+      }]);
+      setTutorMood('puzzled');
     } finally {
       setLoading(false);
     }
   };
 
-  // Predefined quick questions for kids
   const getQuickQuestions = () => {
-    if (context.startsWith('lesson')) {
-      return ["How do I solve this?", "What is a closed circuit?", "Show me a hint!"];
-    }
-    return ["What is electricity?", "What does a resistor do?", "Tell me a science joke!"];
+    return ["Debug Circuit 🔧", "Give me a Hint 💡", "How does a switch work?"];
   };
 
   const getSparkyAvatar = () => {
     switch (tutorMood) {
       case 'thinking':
         return (
-          <div className="relative w-12 h-12 bg-gradient-to-br from-amber-400 to-yellow-300 rounded-full flex items-center justify-center border-4 border-slate-700 animate-pulse shadow-cartoon shrink-0">
-            <span className="text-2xl">🤔</span>
+          <div className="relative w-12 h-12 bg-gradient-to-br from-indigo-400 to-blue-400 rounded-full flex items-center justify-center border-4 border-slate-700 animate-pulse shadow-cartoon shrink-0">
+            <span className="text-2xl">⚙️</span>
           </div>
         );
       case 'excited':
         return (
-          <div className="relative w-12 h-12 bg-gradient-to-br from-yellow-300 to-amber-300 rounded-full flex items-center justify-center border-4 border-slate-700 animate-bounce shadow-cartoon shrink-0">
-            <span className="text-2xl">🤩</span>
+          <div className="relative w-12 h-12 bg-gradient-to-br from-yellow-300 to-amber-400 rounded-full flex items-center justify-center border-4 border-slate-700 animate-bounce shadow-cartoon shrink-0">
+            <span className="text-2xl">⚡</span>
           </div>
         );
       case 'puzzled':
         return (
-          <div className="relative w-12 h-12 bg-gradient-to-br from-amber-400 to-yellow-300 rounded-full flex items-center justify-center border-4 border-slate-700 shadow-cartoon shrink-0">
-            <span className="text-2xl">😮</span>
+          <div className="relative w-12 h-12 bg-gradient-to-br from-amber-400 to-orange-400 rounded-full flex items-center justify-center border-4 border-slate-700 shadow-cartoon shrink-0">
+            <span className="text-2xl">🔍</span>
           </div>
         );
       default: // happy
         return (
-          <div className="relative w-12 h-12 bg-gradient-to-br from-amber-300 to-yellow-200 rounded-full flex items-center justify-center border-4 border-slate-700 shadow-cartoon shrink-0 group-hover:scale-105 transition-transform">
-            <span className="text-2xl">💡</span>
+          <div className="relative w-12 h-12 bg-gradient-to-br from-blue-300 to-cyan-300 rounded-full flex items-center justify-center border-4 border-slate-700 shadow-cartoon shrink-0 group-hover:scale-105 transition-transform">
+            <span className="text-2xl">🤖</span>
           </div>
         );
     }
   };
+
+  const renderMessageContent = (msg) => {
+    if (!msg.isStructured) {
+      return (
+        <div className="text-xs leading-relaxed">
+          {msg.text.split('**').map((chunk, idx) => 
+            idx % 2 === 1 ? <strong key={idx} className="font-bold text-indigo-700">{chunk}</strong> : chunk
+          )}
+        </div>
+      );
+    }
+
+    const { problemAnalysis, explanation, fixSteps, learningInsight, encouragement } = msg.structuredData;
+    
+    return (
+      <div className="flex flex-col gap-2 text-xs">
+        {problemAnalysis && (
+          <div className="bg-red-50 border border-red-200 text-red-800 p-2 rounded-lg">
+            <div className="font-black flex items-center gap-1"><AlertTriangle className="w-3 h-3"/> Analysis</div>
+            <div>{problemAnalysis}</div>
+          </div>
+        )}
+        {explanation && (
+          <div className="bg-blue-50 border border-blue-200 text-blue-800 p-2 rounded-lg">
+            <div className="font-black flex items-center gap-1"><Info className="w-3 h-3"/> Explanation</div>
+            <div>{explanation}</div>
+          </div>
+        )}
+        {fixSteps && (
+          <div className="bg-emerald-50 border border-emerald-200 text-emerald-800 p-2 rounded-lg">
+            <div className="font-black flex items-center gap-1"><Wrench className="w-3 h-3"/> Fix Steps</div>
+            <div className="whitespace-pre-line">{fixSteps}</div>
+          </div>
+        )}
+        {learningInsight && (
+          <div className="bg-amber-50 border border-amber-200 text-amber-800 p-2 rounded-lg">
+            <div className="font-black flex items-center gap-1"><Lightbulb className="w-3 h-3"/> Tip</div>
+            <div>{learningInsight}</div>
+          </div>
+        )}
+        {encouragement && (
+          <div className="text-slate-600 font-bold italic mt-1 text-center">
+            "{encouragement}"
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // Helper Icon
+  const Info = ({ className }) => (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+  );
 
   const renderContent = (isPopup = false) => (
     <div className={`flex flex-col h-full overflow-hidden ${isPopup ? 'bg-white rounded-3xl border-4 border-slate-800 shadow-cartoon-xl' : 'glass border-2 border-slate-300 rounded-3xl'} p-4`}>
@@ -165,7 +238,7 @@ export default function AITutorPanel({
           {getSparkyAvatar()}
           <div>
             <h3 className="font-bold text-slate-800 flex items-center gap-1 text-sm sm:text-base leading-none">
-              Sparky 🤖 <span className="bg-amber-100 text-amber-800 text-[9px] px-1.5 py-0.5 rounded-full border border-amber-300">Tutor</span>
+              Sparky 🤖 <span className="bg-blue-100 text-blue-800 text-[9px] px-1.5 py-0.5 rounded-full border border-blue-300">Engineering AI</span>
             </h3>
             <p className="text-[10px] text-slate-400 font-bold italic mt-1 max-w-[160px] truncate">
               "{SPARKLE_PHRASES[Math.floor(Date.now() / 60000) % SPARKLE_PHRASES.length]}"
@@ -191,15 +264,13 @@ export default function AITutorPanel({
             className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}
           >
             <div className={`
-              max-w-[85%] rounded-2xl p-2.5 border-2 text-xs leading-relaxed
+              max-w-[90%] rounded-2xl p-2.5 border-2
               ${msg.sender === 'user'
                 ? 'bg-science-100 text-science-900 border-science-300 rounded-tr-none'
                 : 'bg-white text-slate-800 border-slate-200 rounded-tl-none shadow-sm'
               }
             `}>
-              {msg.text.split('**').map((chunk, idx) => 
-                idx % 2 === 1 ? <strong key={idx} className="font-bold text-amber-700">{chunk}</strong> : chunk
-              )}
+              {renderMessageContent(msg)}
             </div>
             <span className="text-[9px] text-slate-400 mt-0.5 px-1">
               {msg.sender === 'user' ? 'You' : 'Sparky'}
@@ -208,7 +279,7 @@ export default function AITutorPanel({
         ))}
         {loading && (
           <div className="flex items-center gap-1.5 text-slate-400 text-[10px] font-semibold px-2 animate-pulse">
-            <Sparkles className="w-3 h-3 text-amber-500 animate-spin" /> Sparky is thinking...
+            <Sparkles className="w-3 h-3 text-indigo-500 animate-spin" /> Sparky is analyzing...
           </div>
         )}
         <div ref={messagesEndRef} />
@@ -238,7 +309,7 @@ export default function AITutorPanel({
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask Sparky a question..."
+          placeholder="Ask Sparky for help..."
           className="flex-1 px-2 py-1 text-xs text-slate-700 focus:outline-none placeholder-slate-400 font-medium"
           disabled={loading}
         />
@@ -260,24 +331,24 @@ export default function AITutorPanel({
         {!isOpen && (
           <div 
             onClick={() => setIsOpen(true)}
-            className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-gradient-to-br from-amber-400 to-yellow-300 border-4 border-slate-800 p-3.5 rounded-full shadow-cartoon hover:scale-105 active:scale-95 transition-all cursor-pointer group animate-bounce"
-            title="Click to chat with Sparky! ⚡"
+            className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-gradient-to-br from-indigo-400 to-blue-400 border-4 border-slate-800 p-3.5 rounded-full shadow-cartoon hover:scale-105 active:scale-95 transition-all cursor-pointer group animate-bounce"
+            title="Ask Sparky the Engineering Assistant! ⚙️"
           >
-            <span className="text-3xl select-none">💡</span>
-            <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 text-slate-800 font-black text-xs uppercase tracking-wider leading-none">
-              Sparky Tutor! 🤖
+            <span className="text-3xl select-none">🤖</span>
+            <span className="max-w-0 overflow-hidden group-hover:max-w-xs transition-all duration-300 text-white font-black text-xs uppercase tracking-wider leading-none">
+              Sparky Engine ⚙️
             </span>
             {/* Pulsing indicator */}
             <span className="absolute top-0 right-0 flex h-3.5 w-3.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-indigo-500"></span>
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-200 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-blue-100"></span>
             </span>
           </div>
         )}
 
         {/* Floating Chat Container */}
         {isOpen && (
-          <div className="fixed bottom-6 right-6 w-[310px] sm:w-[350px] h-[440px] max-h-[75vh] z-50 transition-all select-none">
+          <div className="fixed bottom-6 right-6 w-[310px] sm:w-[350px] h-[500px] max-h-[80vh] z-50 transition-all select-none">
             {renderContent(true)}
           </div>
         )}
@@ -290,71 +361,4 @@ export default function AITutorPanel({
       {renderContent(false)}
     </div>
   );
-}
-
-// Local Fallback Replies for Kids
-function getFallbackReply(query, grade, context, circuit) {
-  const q = query.toLowerCase();
-
-  // Jokes
-  if (q.includes('joke') || q.includes('funny')) {
-    const jokes = [
-      "Why did the lightbulb fail the test? Because it wasn't very bright! 😂",
-      "What did the wire say to the battery? 'I get a real charge out of you!' ⚡",
-      "Why did the electron look sad? Because it was feeling negative! ⚛️",
-      "What is a scientist's favorite dog? A lab-rador! 🐕",
-    ];
-    return jokes[Math.floor(Math.random() * jokes.length)];
-  }
-
-  // General electricity questions
-  if (q.includes('what is electricity') || q.includes('how does electricity work')) {
-    if (grade === 'KG' || grade === 'Grade 1') {
-      return "Electricity is like a **magic river** of tiny, invisible stars called **electrons**! When they flow through wires in a loop, they light up bulbs and spin toys! 🌟";
-    }
-    return "Electricity is the flow of tiny charged particles called **electrons**! They need a complete, unbroken loop called a **closed circuit** to travel from a power source (like a battery) to a user (like an LED bulb or motor).";
-  }
-
-  // Conductors and insulators
-  if (q.includes('conductor') || q.includes('insulator') || q.includes('metal') || q.includes('wood')) {
-    return "A **conductor** (like copper, gold, or key) is a friendly helper that lets electrons pass through easily! An **insulator** (like wood, plastic, or rubber) is a blocker that stops electrons from flowing. For Grade 1, try testing different objects in our loop!";
-  }
-
-  // Switch questions
-  if (q.includes('switch')) {
-    return "A **switch** is like a drawbridge for our electron road! When the switch is **CLOSED** (bridge down), the electrons cross and the light turns on. When it's **OPEN** (bridge up), the road is broken, and everything turns off! 🌉";
-  }
-
-  // Series vs Parallel
-  if (q.includes('series') || q.includes('parallel')) {
-    return "In a **Series circuit**, components are lined up in a single line like passengers on a bus. If one steps off (unscrews), the bus stops! In a **Parallel circuit**, components have their own separate roads, so they get full power and stay bright even if one is broken! 💡💡";
-  }
-
-  // Resistor questions
-  if (q.includes('resistor') || q.includes('resistance')) {
-    return "A **resistor** acts like a bottleneck or speed bump on the electron road! It slows down the current so delicate things (like LEDs or buzzers) don't get too hot or burn out. It's like a shield! 🛡️";
-  }
-
-  // Lesson hints
-  if (q.includes('hint') || q.includes('solve') || q.includes('how do i')) {
-    if (context === 'lesson-kg') {
-      return "Click the glowing wire end on the right, then click the bulb connector to create a complete loop. You got this!";
-    }
-    if (context === 'lesson-g1') {
-      return "Try dragging the **metal key** or the **copper coin** into the blank slot. Metal objects are excellent **conductors** of electricity!";
-    }
-    if (context === 'lesson-g2') {
-      return "Drag a **Switch** from the inventory and drop it into the gap in the wire. Then click on the switch to close it and let the current flow!";
-    }
-    if (context === 'lesson-g3') {
-      return "Build two circuits: one where bulbs are on the *same line* (Series) and one where they are on *separate loops* (Parallel). Notice how the Parallel bulbs shine twice as bright!";
-    }
-    if (context === 'lesson-g4') {
-      return "Connect the Battery, Switch, Resistor, and Buzzer in a loop. Click the switch to close it, and adjust the slider on the Resistor to see how it dims or silences the buzzer!";
-    }
-    return "Make sure you have a **Battery** to provide power, **wires** connecting all parts, and that the path loops all the way back from the battery (+) to (-). Also make sure any switches are closed!";
-  }
-
-  // Default response
-  return `That is a super question! In **${grade}**, we learn that circuits need a complete path to work. Try checking if your wires are connected from one side of the battery all the way to the other! Let me know if you need another hint.`;
 }

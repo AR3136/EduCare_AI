@@ -4,6 +4,18 @@
  * Allows microservice-like React modules to communicate without
  * direct import coupling. Uses both a local subscriber array
  * and browser-native CustomEvents to support standard page elements.
+ * 
+ * STANDARD EVENTS:
+ * - SPARKY_SESSION_STARTED: Emitted when Sparky panel opens. Payload: { studentId, grade, context }
+ * - CIRCUIT_LOADED: Emitted when a preset circuit loads. Payload: { studentId, preset }
+ * - COMPONENT_ADDED: Emitted when dragging a component. Payload: { studentId, componentId }
+ * - CIRCUIT_BROKEN: Emitted on short circuit/errors. Payload: { studentId, reason }
+ * - HINT_REQUESTED: Emitted when asking for hints. Payload: { studentId, queryText }
+ * - SPARKY_HINT_GIVEN: Emitted when Sparky replies with a hint. Payload: { studentId, hint }
+ * - SPARKY_ERROR_DETECTED: Emitted when Sparky debug finds issue. Payload: { studentId, error }
+ * - SPARKY_CIRCUIT_FIXED: Emitted when bug resolved. Payload: { studentId }
+ * - SPARKY_LESSON_COMPLETED: Emitted when lesson circuit built. Payload: { studentId, starsEarned }
+ * - SPARKY_SCORE_UPDATED: Emitted when telemetry updates. Payload: { studentId, newScore }
  */
 
 class FrontendEventBus {

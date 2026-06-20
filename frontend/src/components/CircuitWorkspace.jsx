@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Play, RotateCcw, HelpCircle, Save, Info, Sparkles } from 'lucide-react';
 import { CartoonButton, CartoonCard } from './Reusables';
+import { eventBus } from '../shared/eventBus';
 
 // Component constants
 export const COMPONENTS = {
@@ -27,7 +28,8 @@ export default function CircuitWorkspace({
   targetCircuit = null, 
   onChallengePassed = null, 
   onChallengeFailed = null, 
-  onSaveCircuit = null
+  onSaveCircuit = null,
+  studentId = 'default_student'
 }) {
   // We represent a 4-slot square loop circuit:
   // Slot 0 (Left): Power Source
@@ -78,6 +80,8 @@ export default function CircuitWorkspace({
     } else { // Grade 4
       setSlots([COMPONENTS.BATTERY, COMPONENTS.SWITCH, COMPONENTS.BULB, COMPONENTS.RESISTOR]);
     }
+
+    eventBus.publish('CIRCUIT_LOADED', { studentId, grade });
   };
 
   // Evaluate circuit logic on update
@@ -102,6 +106,7 @@ export default function CircuitWorkspace({
       setIsFlowing(false);
       setBulbBrightness(0);
       setCircuitMessage("⚠️ SHORT CIRCUIT! Battery is too hot! Add a bulb or resistor.");
+      eventBus.publish('CIRCUIT_BROKEN', { studentId, reason: 'Short Circuit' });
       return;
     } else {
       setShortCircuit(false);
@@ -201,6 +206,7 @@ export default function CircuitWorkspace({
     newSlots[activeSlot] = component;
     setSlots(newSlots);
     setActiveSlot(null);
+    eventBus.publish('COMPONENT_ADDED', { studentId, componentId: component.id, slot: activeSlot });
   };
 
   const getAvailableComponents = () => {

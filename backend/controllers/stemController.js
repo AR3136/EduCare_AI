@@ -50,6 +50,7 @@ function updateProgressCalculations(data) {
   const stars = data.stars || 15;
   const grade = data.grade || 'KG';
   const completedLessons = data.completedLessons || [];
+  let badges = data.badges || [];
   
   const level = Math.floor(completedLessons.length / 5) + 1;
   
@@ -84,9 +85,28 @@ function updateProgressCalculations(data) {
   
   const readinessScore = Math.round((completedRequirement / totalRequirement) * 100);
   
+  // Award Badges Server-Side
+  if (completedLessons.length >= 2 && !badges.includes('junior_engineer')) {
+    badges.push('junior_engineer');
+  }
+  if (completedLessons.length >= 5 && !badges.includes('circuit_master')) {
+    badges.push('circuit_master');
+  }
+  if (stars >= 30 && !badges.includes('stem_explorer')) {
+    badges.push('stem_explorer');
+  }
+  const allSimKeys = ['sim_preset_GRADE_1_BATTERY_LED', 'sim_preset_GRADE_2_OPEN_CIRCUIT', 'sim_preset_GRADE_2_CLOSED_CIRCUIT', 'sim_preset_GRADE_3_VIRTUAL_TORCH', 'sim_preset_GRADE_4_TRAFFIC_LIGHT'];
+  if (allSimKeys.every(k => completedLessons.includes(k)) && !badges.includes('sim_wizard')) {
+    badges.push('sim_wizard');
+  }
+  if (completedLessons.includes('sparky_debug_complete') && !badges.includes('sparky_debug_pro')) {
+    badges.push('sparky_debug_pro');
+  }
+  
   return {
     ...data,
     level,
+    badges,
     readinessScore
   };
 }

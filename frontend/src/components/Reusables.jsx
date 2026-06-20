@@ -17,6 +17,8 @@ export const CartoonButton = ({
     power: 'bg-power-400 hover:bg-power-500 text-white border-power-600',
     electric: 'bg-electric-400 hover:bg-electric-500 text-white border-electric-500',
     gray: 'bg-slate-300 hover:bg-slate-400 text-slate-700 border-slate-400',
+    teal: 'bg-teal-500 hover:bg-teal-600 text-white border-teal-700',
+    purple: 'bg-purple-500 hover:bg-purple-600 text-white border-purple-700',
   };
 
   const sizeClasses = {

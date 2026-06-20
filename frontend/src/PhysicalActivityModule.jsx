@@ -94,6 +94,69 @@ export default function PhysicalActivityModule({
   
   const timerRef = useRef(null);
 
+  const synthRef = useRef(window.speechSynthesis);
+  const [voice, setVoice] = useState(null);
+
+  // Initialize Speech synthesis voice
+  useEffect(() => {
+    const loadVoices = () => {
+      if (!synthRef.current) return;
+      const voices = synthRef.current.getVoices();
+      const chosenVoice = voices.find(v => v.lang.includes('en') && 
+        (v.name.includes('Natural') || v.name.includes('Google') || v.name.includes('Zira') || v.name.includes('Samantha'))
+      ) || voices.find(v => v.lang.startsWith('en')) || voices[0];
+      setVoice(chosenVoice);
+    };
+
+    loadVoices();
+    if (synthRef.current) {
+      synthRef.current.onvoiceschanged = loadVoices;
+    }
+
+    return () => {
+      if (synthRef.current) {
+        synthRef.current.cancel();
+      }
+    };
+  }, []);
+
+  const speak = (text) => {
+    if (muted || !synthRef.current) return;
+    synthRef.current.cancel();
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    if (voice) {
+      utterance.voice = voice;
+    }
+    utterance.pitch = 1.35;
+    utterance.rate = 0.95;
+    synthRef.current.speak(utterance);
+  };
+
+  // Speak descriptions on view/step transitions
+  useEffect(() => {
+    if (muted) {
+      if (synthRef.current) {
+        synthRef.current.cancel();
+      }
+      return;
+    }
+    if (!currentActivity) return;
+
+    if (view === 'assigned') {
+      speak(`Time for a break! Let's do ${currentActivity.title}. ${currentActivity.description} Click start when you are ready!`);
+    } else if (view === 'active') {
+      const step = currentActivity.instructions[currentStep];
+      if (step) {
+        speak(`Step ${currentStep + 1} of ${currentActivity.instructions.length}. ${step.description}`);
+      }
+    } else if (view === 'completed') {
+      speak(`Fantastic job! Break completed! You earned 5 stars!`);
+    } else if (view === 'skipped') {
+      speak("That's okay! Let's find another activity.");
+    }
+  }, [view, currentStep, currentActivity, muted, voice]);
+
   // Load and Assign Activity on Mount
   useEffect(() => {
     fetchAssignedActivity();
@@ -449,8 +512,8 @@ export default function PhysicalActivityModule({
           <CartoonCard color="white" className="border-l-8 border-l-indigo-500 flex flex-col md:flex-row gap-8 items-center p-8 bg-gradient-to-r from-indigo-50/50 to-white">
             
             {/* Mascot / Emoji Avatar */}
-            <div className="w-40 h-40 bg-gradient-to-br from-indigo-400 to-violet-500 rounded-full flex items-center justify-center border-4 border-slate-800 shadow-cartoon animate-bounce-slow flex-shrink-0">
-              <span className="text-8xl select-none">{currentActivity.emoji || "🏃"}</span>
+            <div className="flex-shrink-0">
+              <ActivityIllustration category={currentActivity.category} step={0} />
             </div>
 
             {/* Content Details */}
@@ -577,8 +640,8 @@ export default function PhysicalActivityModule({
 
               {/* Instruction slide content */}
               <div className="py-8 flex flex-col items-center text-center space-y-4 min-h-[200px] justify-center">
-                <div className="text-6xl animate-bounce-slow select-none mb-2">
-                  {currentActivity.emoji || "🏃"}
+                <div className="mb-2">
+                  <ActivityIllustration category={currentActivity.category} step={currentStep} />
                 </div>
                 <h3 className="text-xl font-extrabold text-slate-800 px-4 max-w-lg leading-relaxed">
                   {currentActivity.instructions[currentStep] ? currentActivity.instructions[currentStep].description : "Hold pose and stretch!"}
@@ -779,6 +842,273 @@ export default function PhysicalActivityModule({
 
       </main>
       
+    </div>
+  );
+}
+
+function ActivityIllustration({ category = 'stretching', step = 0 }) {
+  const cat = (category || 'stretching').toLowerCase();
+
+  const animationStyles = `
+    @keyframes sway {
+      0%, 100% { transform: rotate(-1.5deg); }
+      50% { transform: rotate(1.5deg); }
+    }
+    @keyframes breathe {
+      0%, 100% { transform: scale(0.95); }
+      50% { transform: scale(1.05); }
+    }
+    @keyframes raiseArms {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-3px); }
+    }
+    @keyframes bend {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(4deg); }
+    }
+    @keyframes wiggle {
+      0%, 100% { transform: translate(0, 0); }
+      25% { transform: translate(-1px, 0.5px) rotate(-0.5deg); }
+      75% { transform: translate(1px, -0.5px) rotate(0.5deg); }
+    }
+    @keyframes run {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-2px) rotate(0.5deg); }
+    }
+    @keyframes spinStar {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .animate-sway { animation: sway 3s ease-in-out infinite; transform-origin: center bottom; }
+    .animate-breathe { animation: breathe 4s ease-in-out infinite; transform-origin: center; }
+    .animate-raise { animation: raiseArms 2s ease-in-out infinite; }
+    .animate-bend { animation: bend 2.5s ease-in-out infinite; transform-origin: 60px 75px; }
+    .animate-wiggle { animation: wiggle 0.15s linear infinite; }
+    .animate-run { animation: run 0.6s ease-in-out infinite; }
+    .animate-star { animation: spinStar 10s linear infinite; transform-origin: center; }
+  `;
+
+  if (cat === 'yoga') {
+    if (step === 0) {
+      // Tree pose left leg stand, hands at chest
+      return (
+        <div className="relative w-36 h-36 bg-emerald-50/50 border-4 border-slate-800 rounded-3xl p-1 shadow-inner overflow-hidden flex items-center justify-center">
+          <style>{animationStyles}</style>
+          <svg viewBox="0 0 120 120" className="w-full h-full animate-sway">
+            <circle cx="60" cy="60" r="45" fill="#A7F3D0" opacity="0.4" />
+            <path d="M 30 95 Q 60 85 90 95" stroke="#047857" strokeWidth="2.5" fill="none" strokeDasharray="3 3" />
+            {/* Head */}
+            <circle cx="60" cy="35" r="12" fill="#FFA07A" stroke="#E26A4F" strokeWidth="2.5" />
+            <circle cx="56" cy="33" r="1.5" fill="#2C3E50" />
+            <circle cx="64" cy="33" r="1.5" fill="#2C3E50" />
+            <path d="M 57 40 Q 60 43 63 40" fill="none" stroke="#2C3E50" strokeWidth="1.5" strokeLinecap="round" />
+            {/* Body */}
+            <rect x="50" y="47" width="20" height="30" rx="6" fill="#10B981" stroke="#047857" strokeWidth="2.5" />
+            {/* Standing Leg (Right) */}
+            <line x1="56" y1="77" x2="56" y2="105" stroke="#E26A4F" strokeWidth="4" strokeLinecap="round" />
+            <line x1="56" y1="105" x2="62" y2="105" stroke="#E26A4F" strokeWidth="4" strokeLinecap="round" />
+            {/* Bent Leg (Left) */}
+            <path d="M 64 77 L 76 88 L 58 88" stroke="#E26A4F" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+            {/* Hands at chest - Prayer Pose */}
+            <path d="M 42 55 Q 52 62 60 62 Q 68 62 78 55" stroke="#FFA07A" strokeWidth="3" strokeLinecap="round" fill="none" />
+            <circle cx="60" cy="61" r="3" fill="#FFA07A" />
+            <circle cx="35" cy="40" r="4" fill="#34D399" />
+            <circle cx="85" cy="45" r="5" fill="#34D399" />
+          </svg>
+        </div>
+      );
+    } else if (step === 1) {
+      // Tree pose left leg stand, branches high
+      return (
+        <div className="relative w-36 h-36 bg-emerald-50/50 border-4 border-slate-800 rounded-3xl p-1 shadow-inner overflow-hidden flex items-center justify-center">
+          <style>{animationStyles}</style>
+          <svg viewBox="0 0 120 120" className="w-full h-full animate-sway">
+            <circle cx="60" cy="60" r="45" fill="#A7F3D0" opacity="0.4" />
+            <path d="M 30 95 Q 60 85 90 95" stroke="#047857" strokeWidth="2.5" fill="none" strokeDasharray="3 3" />
+            {/* Head */}
+            <circle cx="60" cy="35" r="12" fill="#FFA07A" stroke="#E26A4F" strokeWidth="2.5" />
+            <circle cx="56" cy="33" r="1.5" fill="#2C3E50" />
+            <circle cx="64" cy="33" r="1.5" fill="#2C3E50" />
+            <path d="M 57 40 Q 60 43 63 40" fill="none" stroke="#2C3E50" strokeWidth="1.5" strokeLinecap="round" />
+            {/* Body */}
+            <rect x="50" y="47" width="20" height="30" rx="6" fill="#10B981" stroke="#047857" strokeWidth="2.5" />
+            {/* Standing Leg (Right) */}
+            <line x1="56" y1="77" x2="56" y2="105" stroke="#E26A4F" strokeWidth="4" strokeLinecap="round" />
+            <line x1="56" y1="105" x2="62" y2="105" stroke="#E26A4F" strokeWidth="4" strokeLinecap="round" />
+            {/* Bent Leg (Left) */}
+            <path d="M 64 77 L 76 88 L 58 88" stroke="#E26A4F" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+            {/* Branches Raised High */}
+            <path d="M 48 55 Q 35 32 30 18" stroke="#FFA07A" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+            <path d="M 72 55 Q 85 32 90 18" stroke="#FFA07A" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+            <circle cx="28" cy="16" r="5" fill="#059669" />
+            <circle cx="92" cy="16" r="5" fill="#059669" />
+          </svg>
+        </div>
+      );
+    } else {
+      // Tree pose standing on opposite foot
+      return (
+        <div className="relative w-36 h-36 bg-emerald-50/50 border-4 border-slate-800 rounded-3xl p-1 shadow-inner overflow-hidden flex items-center justify-center">
+          <style>{animationStyles}</style>
+          <svg viewBox="0 0 120 120" className="w-full h-full animate-sway">
+            <circle cx="60" cy="60" r="45" fill="#A7F3D0" opacity="0.4" />
+            <path d="M 30 95 Q 60 85 90 95" stroke="#047857" strokeWidth="2.5" fill="none" strokeDasharray="3 3" />
+            {/* Head */}
+            <circle cx="60" cy="35" r="12" fill="#FFA07A" stroke="#E26A4F" strokeWidth="2.5" />
+            <circle cx="56" cy="33" r="1.5" fill="#2C3E50" />
+            <circle cx="64" cy="33" r="1.5" fill="#2C3E50" />
+            <path d="M 57 40 Q 60 43 63 40" fill="none" stroke="#2C3E50" strokeWidth="1.5" strokeLinecap="round" />
+            {/* Body */}
+            <rect x="50" y="47" width="20" height="30" rx="6" fill="#10B981" stroke="#047857" strokeWidth="2.5" />
+            {/* Standing Leg (Left) */}
+            <line x1="64" y1="77" x2="64" y2="105" stroke="#E26A4F" strokeWidth="4" strokeLinecap="round" />
+            <line x1="64" y1="105" x2="70" y2="105" stroke="#E26A4F" strokeWidth="4" strokeLinecap="round" />
+            {/* Bent Leg (Right) */}
+            <path d="M 56 77 L 44 88 L 62 88" stroke="#E26A4F" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+            {/* Branches Raised High */}
+            <path d="M 48 55 Q 35 32 30 18" stroke="#FFA07A" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+            <path d="M 72 55 Q 85 32 90 18" stroke="#FFA07A" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+            <circle cx="28" cy="16" r="5" fill="#059669" />
+            <circle cx="92" cy="16" r="5" fill="#059669" />
+          </svg>
+        </div>
+      );
+    }
+  }
+
+  if (cat === 'stretching') {
+    if (step === 0) {
+      // Stand tall, arms stretched upwards
+      return (
+        <div className="relative w-36 h-36 bg-amber-50/50 border-4 border-slate-800 rounded-3xl p-1 shadow-inner overflow-hidden flex items-center justify-center">
+          <style>{animationStyles}</style>
+          <svg viewBox="0 0 120 120" className="w-full h-full">
+            <circle cx="60" cy="60" r="45" fill="#FDE68A" opacity="0.4" />
+            <path d="M 30 100 Q 60 92 90 100" stroke="#B45309" strokeWidth="2.5" fill="none" strokeDasharray="3 3" />
+            {/* Head */}
+            <circle cx="60" cy="35" r="12" fill="#FFA07A" stroke="#E26A4F" strokeWidth="2.5" />
+            <circle cx="56" cy="33" r="1.5" fill="#2C3E50" />
+            <circle cx="64" cy="33" r="1.5" fill="#2C3E50" />
+            <path d="M 56 39 Q 60 44 64 39" fill="none" stroke="#2C3E50" strokeWidth="1.5" strokeLinecap="round" />
+            {/* Body */}
+            <rect x="50" y="47" width="20" height="32" rx="6" fill="#F59E0B" stroke="#D97706" strokeWidth="2.5" />
+            {/* Legs */}
+            <line x1="55" y1="79" x2="52" y2="102" stroke="#E26A4F" strokeWidth="4" strokeLinecap="round" />
+            <line x1="65" y1="79" x2="68" y2="102" stroke="#E26A4F" strokeWidth="4" strokeLinecap="round" />
+            <line x1="52" y1="102" x2="46" y2="102" stroke="#E26A4F" strokeWidth="4" strokeLinecap="round" />
+            <line x1="68" y1="102" x2="74" y2="102" stroke="#E26A4F" strokeWidth="4" strokeLinecap="round" />
+            {/* Arms Stretched High */}
+            <g className="animate-raise">
+              <path d="M 48 55 C 40 45 42 22 45 14" stroke="#E26A4F" strokeWidth="4" strokeLinecap="round" fill="none" />
+              <path d="M 72 55 C 80 45 78 22 75 14" stroke="#E26A4F" strokeWidth="4" strokeLinecap="round" fill="none" />
+            </g>
+          </svg>
+        </div>
+      );
+    } else if (step === 1) {
+      // Bending forward at waist
+      return (
+        <div className="relative w-36 h-36 bg-amber-50/50 border-4 border-slate-800 rounded-3xl p-1 shadow-inner overflow-hidden flex items-center justify-center">
+          <style>{animationStyles}</style>
+          <svg viewBox="0 0 120 120" className="w-full h-full">
+            <circle cx="60" cy="60" r="45" fill="#FDE68A" opacity="0.4" />
+            <path d="M 30 100 Q 60 92 90 100" stroke="#B45309" strokeWidth="2.5" fill="none" strokeDasharray="3 3" />
+            {/* Legs standing straight */}
+            <line x1="52" y1="75" x2="52" y2="102" stroke="#E26A4F" strokeWidth="4" strokeLinecap="round" />
+            <line x1="64" y1="75" x2="64" y2="102" stroke="#E26A4F" strokeWidth="4" strokeLinecap="round" />
+            <line x1="52" y1="102" x2="46" y2="102" stroke="#E26A4F" strokeWidth="4" strokeLinecap="round" />
+            <line x1="64" y1="102" x2="70" y2="102" stroke="#E26A4F" strokeWidth="4" strokeLinecap="round" />
+            {/* Bending Torso */}
+            <g className="animate-bend">
+              <rect x="36" y="58" width="32" height="18" rx="6" fill="#F59E0B" stroke="#D97706" strokeWidth="2.5" />
+              <circle cx="25" cy="62" r="10" fill="#FFA07A" stroke="#E26A4F" strokeWidth="2.5" />
+              <path d="M 45 68 L 22 92" stroke="#E26A4F" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+              <path d="M 52 68 L 26 94" stroke="#E26A4F" strokeWidth="3.5" strokeLinecap="round" fill="none" />
+            </g>
+          </svg>
+        </div>
+      );
+    } else {
+      // Shake limbs
+      return (
+        <div className="relative w-36 h-36 bg-amber-50/50 border-4 border-slate-800 rounded-3xl p-1 shadow-inner overflow-hidden flex items-center justify-center">
+          <style>{animationStyles}</style>
+          <svg viewBox="0 0 120 120" className="w-full h-full">
+            <circle cx="60" cy="60" r="45" fill="#FDE68A" opacity="0.4" />
+            <path d="M 30 100 Q 60 92 90 100" stroke="#B45309" strokeWidth="2.5" fill="none" strokeDasharray="3 3" />
+            <g className="animate-wiggle">
+              <circle cx="60" cy="35" r="12" fill="#FFA07A" stroke="#E26A4F" strokeWidth="2.5" />
+              <circle cx="56" cy="33" r="1.5" fill="#2C3E50" />
+              <circle cx="64" cy="33" r="1.5" fill="#2C3E50" />
+              <path d="M 56 39 Q 60 43 64 39" fill="none" stroke="#2C3E50" strokeWidth="1.5" strokeLinecap="round" />
+              <rect x="50" y="47" width="20" height="32" rx="6" fill="#F59E0B" stroke="#D97706" strokeWidth="2.5" />
+              <path d="M 48 55 C 38 58 26 50 20 48" stroke="#E26A4F" strokeWidth="4" strokeLinecap="round" fill="none" />
+              <path d="M 72 55 C 82 58 94 50 100 48" stroke="#E26A4F" strokeWidth="4" strokeLinecap="round" fill="none" />
+              <line x1="54" y1="79" x2="48" y2="101" stroke="#E26A4F" strokeWidth="4" strokeLinecap="round" />
+              <line x1="66" y1="79" x2="72" y2="101" stroke="#E26A4F" strokeWidth="4" strokeLinecap="round" />
+            </g>
+          </svg>
+        </div>
+      );
+    }
+  }
+
+  if (cat === 'mindfulness' || cat === 'breathing' || cat === 'relaxation') {
+    return (
+      <div className="relative w-36 h-36 bg-purple-50/50 border-4 border-slate-800 rounded-3xl p-1 shadow-inner overflow-hidden flex items-center justify-center">
+        <style>{animationStyles}</style>
+        <svg viewBox="0 0 120 120" className="w-full h-full">
+          <circle cx="60" cy="60" r="45" fill="#DDD6FE" opacity="0.4" />
+          <circle cx="60" cy="60" r="32" fill="#C084FC" opacity="0.25" className="animate-breathe" />
+          <circle cx="60" cy="60" r="22" fill="#A855F7" opacity="0.35" className="animate-breathe" />
+          {/* Head */}
+          <circle cx="60" cy="42" r="10" fill="#FFA07A" stroke="#9061F9" strokeWidth="2" />
+          {/* Eyes closed */}
+          <path d="M 55 42 Q 57 44 58 42" stroke="#2C3E50" strokeWidth="1.2" fill="none" />
+          <path d="M 62 42 Q 63 44 65 42" stroke="#2C3E50" strokeWidth="1.2" fill="none" />
+          {/* Body */}
+          <rect x="52" y="52" width="16" height="24" rx="5" fill="#8B5CF6" stroke="#6D28D9" strokeWidth="2.5" />
+          {/* Arms crossed on lap */}
+          <path d="M 52 58 Q 42 66 60 72 M 68 58 Q 78 66 60 72" stroke="#FFA07A" strokeWidth="3" strokeLinecap="round" fill="none" />
+          <path d="M 45 76 C 45 84 75 84 75 76" stroke="#6D28D9" strokeWidth="5.5" strokeLinecap="round" fill="none" />
+        </svg>
+      </div>
+    );
+  }
+
+  // Fallback: star jumps or jogging
+  const isSecondHalf = step % 2 === 1;
+  return (
+    <div className="relative w-36 h-36 bg-indigo-50/50 border-4 border-slate-800 rounded-3xl p-1 shadow-inner overflow-hidden flex items-center justify-center">
+      <style>{animationStyles}</style>
+      <svg viewBox="0 0 120 120" className="w-full h-full animate-run">
+        <circle cx="60" cy="60" r="45" fill="#C7D2FE" opacity="0.4" />
+        <path d="M 30 100 Q 60 92 90 100" stroke="#4338CA" strokeWidth="2.5" fill="none" strokeDasharray="3 3" />
+        
+        {isSecondHalf ? (
+          <g>
+            <circle cx="60" cy="35" r="12" fill="#FFA07A" stroke="#E26A4F" strokeWidth="2.5" />
+            <circle cx="56" cy="33" r="1.5" fill="#2C3E50" />
+            <circle cx="64" cy="33" r="1.5" fill="#2C3E50" />
+            <rect x="50" y="47" width="20" height="30" rx="6" fill="#4F46E5" stroke="#3730A3" strokeWidth="2.5" />
+            <path d="M 48 53 C 35 45 25 35 15 32" stroke="#E26A4F" strokeWidth="4.5" strokeLinecap="round" fill="none" />
+            <path d="M 72 53 C 85 45 95 35 105 32" stroke="#E26A4F" strokeWidth="4.5" strokeLinecap="round" fill="none" />
+            <line x1="53" y1="77" x2="35" y2="98" stroke="#E26A4F" strokeWidth="4.5" strokeLinecap="round" />
+            <line x1="67" y1="77" x2="85" y2="98" stroke="#E26A4F" strokeWidth="4.5" strokeLinecap="round" />
+          </g>
+        ) : (
+          <g>
+            <circle cx="63" cy="33" r="12" fill="#FFA07A" stroke="#E26A4F" strokeWidth="2.5" />
+            <circle cx="60" cy="31" r="1.5" fill="#2C3E50" />
+            <circle cx="67" cy="31" r="1.5" fill="#2C3E50" />
+            <rect x="52" y="45" width="20" height="32" rx="6" fill="#4F46E5" stroke="#3730A3" strokeWidth="2.5" transform="rotate(5 62 61)" />
+            <path d="M 56 77 L 44 90 L 32 94" stroke="#E26A4F" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+            <path d="M 66 77 L 76 88 L 68 101" stroke="#E26A4F" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+            <path d="M 52 50 L 40 52 L 44 62" stroke="#E26A4F" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+            <path d="M 72 50 L 82 54 L 78 66" stroke="#E26A4F" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          </g>
+        )}
+      </svg>
     </div>
   );
 }

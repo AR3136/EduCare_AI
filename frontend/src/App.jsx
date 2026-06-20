@@ -10,11 +10,23 @@ import { eventBus } from './shared/eventBus';
 import { API_BASE } from './config';
 import AITutorPanel from './components/AITutorPanel';
 import FitFriendPanel from './components/FitFriendPanel';
+import CompanionModule from './CompanionModule';
+import EnglishAIModule from './EnglishAIModule';
+import MathModule from './MathModule';
+import MathMentorPanel from './components/MathMentorPanel';
+import LogicModule from './LogicModule';
+import LogicLeapPanel from './components/LogicLeapPanel';
+import StudentLogin from './components/StudentLogin';
 
 export default function App() {
   const navigate = useNavigate();
   const location = useLocation();
   
+  // Login State
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    return !!localStorage.getItem('educare_student_name');
+  });
+
   // Dashboard view toggle: 'parent' | 'teacher'
   const [dashboardView, setDashboardView] = useState('parent');
   
@@ -25,6 +37,32 @@ export default function App() {
     badges: [],
     readinessScore: 0
   });
+
+  const [activeGrade, setActiveGrade] = useState(() => {
+    return localStorage.getItem('educare_grade_student_123') || 'KG';
+  });
+
+  const [activeAge, setActiveAge] = useState(() => {
+    return parseInt(localStorage.getItem('educare_age_student_123') || '6');
+  });
+
+  // Keep activeGrade/activeAge updated from eventBus
+  useEffect(() => {
+    const unsubscribeGrade = eventBus.subscribe('GRADE_CHANGED', (data) => {
+      if (data && data.grade) {
+        setActiveGrade(data.grade);
+      }
+    });
+    const unsubscribeAge = eventBus.subscribe('AGE_CHANGED', (data) => {
+      if (data && data.age) {
+        setActiveAge(data.age);
+      }
+    });
+    return () => {
+      unsubscribeGrade();
+      unsubscribeAge();
+    };
+  }, []);
 
   const [notification, setNotification] = useState(null);
 
@@ -130,6 +168,16 @@ export default function App() {
       unsubscribeLogic();
     };
   }, [navigate]);
+
+  if (!isAuthenticated) {
+    return <StudentLogin onLoginComplete={() => {
+      setIsAuthenticated(true);
+      const newGrade = localStorage.getItem('educare_grade_student_123');
+      const newAge = localStorage.getItem('educare_age_student_123');
+      if (newGrade) eventBus.publish('GRADE_CHANGED', { grade: newGrade });
+      if (newAge) eventBus.publish('AGE_CHANGED', { age: parseInt(newAge) });
+    }} />;
+  }
 
   return (
     <div className="min-h-screen bg-[#fcfaf7] text-slate-800 font-sans selection:bg-indigo-100 flex flex-col justify-between">
@@ -254,8 +302,64 @@ export default function App() {
                   <BookOpen className="w-6 h-6 text-indigo-500" /> AI Classrooms & Labs
                 </h3>
 
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   
+                  {/* 5. LOGICLEAP AI LAB PORTAL (Active) */}
+                  <CartoonCard color="white" className="flex flex-col justify-between h-64 border-l-8 border-l-teal-500 shadow-cartoon hover:shadow-cartoon-hover hover:scale-102 transition-all group">
+                    <div>
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="text-3xl">🧠</span>
+                        <span className="text-[10px] bg-teal-100 border border-teal-300 text-teal-800 px-2.5 py-0.5 rounded-full font-bold">
+                          ACTIVE PORTAL
+                        </span>
+                      </div>
+                      <h4 className="font-extrabold text-lg text-slate-800 group-hover:text-teal-600 transition-colors leading-snug">
+                        LogicLeap AI Lab
+                      </h4>
+                      <p className="text-xs text-slate-500 font-semibold mt-1.5 leading-relaxed animate-pulse-slow">
+                        Stretch your brain with shape matching, pattern continuation, grid navigation, multi-step comparisons, and truth table puzzles!
+                      </p>
+                    </div>
+                    <CartoonButton 
+                      color="teal" 
+                      onClick={() => {
+                        navigate('/logic');
+                        showNotification("🧠 Loaded LogicLeap AI Lab workspace!");
+                      }}
+                      className="w-full font-black text-xs text-white"
+                    >
+                      Enter Logic Lab 🚀
+                    </CartoonButton>
+                  </CartoonCard>
+
+                  {/* 1.5. MATHMENTOR AI LAB PORTAL (Active) */}
+                  <CartoonCard color="white" className="flex flex-col justify-between h-64 border-l-8 border-l-purple-500 shadow-cartoon hover:shadow-cartoon-hover hover:scale-102 transition-all group">
+                    <div>
+                      <div className="flex justify-between items-start mb-2">
+                        <span className="text-3xl">🧮</span>
+                        <span className="text-[10px] bg-purple-100 border border-purple-300 text-purple-800 px-2.5 py-0.5 rounded-full font-bold">
+                          ACTIVE PORTAL
+                        </span>
+                      </div>
+                      <h4 className="font-extrabold text-lg text-slate-800 group-hover:text-purple-600 transition-colors leading-snug">
+                        MathMentor AI Lab
+                      </h4>
+                      <p className="text-xs text-slate-500 font-semibold mt-1.5 leading-relaxed">
+                        Master numbers, addition, subtraction, fractions, clocks, decimals, and logic games. Guided by adaptive progressive hint levels 1 to 4!
+                      </p>
+                    </div>
+                    <CartoonButton 
+                      color="science" 
+                      onClick={() => {
+                        navigate('/math');
+                        showNotification("🧮 Loaded MathMentor AI Lab workspace!");
+                      }}
+                      className="w-full"
+                    >
+                      Enter Math Lab 🚀
+                    </CartoonButton>
+                  </CartoonCard>
+
                   {/* 1. STEM & CIRCUITS PORTAL (Active) */}
                   <CartoonCard color="white" className="flex flex-col justify-between h-64 border-l-8 border-l-orange-400 shadow-cartoon hover:shadow-cartoon-hover hover:scale-102 transition-all group">
                     <div>
@@ -284,45 +388,59 @@ export default function App() {
                     </CartoonButton>
                   </CartoonCard>
 
-                  {/* 2. MATH LAB PORTAL (Locked) */}
-                  <CartoonCard color="white" className="flex flex-col justify-between h-64 border-l-8 border-l-slate-300 opacity-60 grayscale group">
+                  {/* 2. ENGLISH AI LAB PORTAL (Active) */}
+                  <CartoonCard color="white" className="flex flex-col justify-between h-64 border-l-8 border-l-rose-400 shadow-cartoon hover:shadow-cartoon-hover hover:scale-102 transition-all group">
                     <div>
                       <div className="flex justify-between items-start mb-2">
-                        <span className="text-3xl">🧮</span>
-                        <span className="text-[10px] bg-slate-100 border text-slate-400 px-2.5 py-0.5 rounded-full font-bold">
-                          COMING SOON
+                        <span className="text-3xl">📚</span>
+                        <span className="text-[10px] bg-rose-100 border border-rose-350 text-rose-800 px-2.5 py-0.5 rounded-full font-bold">
+                          ACTIVE PORTAL
                         </span>
                       </div>
-                      <h4 className="font-extrabold text-lg text-slate-400 leading-snug">
-                        AI Math Lab
+                      <h4 className="font-extrabold text-lg text-slate-800 group-hover:text-rose-500 transition-colors leading-snug">
+                        Astra English AI Lab
                       </h4>
-                      <p className="text-xs text-slate-400 font-medium mt-1.5 leading-relaxed">
-                        Explore fractions, multiplication tables, and word puzzles under the guidance of our custom AI Math wizard!
+                      <p className="text-xs text-slate-500 font-semibold mt-1.5 leading-relaxed">
+                        Read magical stories, take comprehension quizzes, study present/past grammar, practice writing prompts, and test speaking pronunciation!
                       </p>
                     </div>
-                    <CartoonButton color="gray" disabled className="w-full cursor-not-allowed">
-                      Locked 🔒
+                    <CartoonButton 
+                      color="science" 
+                      onClick={() => {
+                        navigate('/english-ai');
+                        showNotification("📚 Loaded Astra English AI Lab workspace!");
+                      }}
+                      className="w-full"
+                    >
+                      Enter English Lab 🚀
                     </CartoonButton>
                   </CartoonCard>
 
-                  {/* 3. LANGUAGE BUDDY PORTAL (Locked) */}
-                  <CartoonCard color="white" className="flex flex-col justify-between h-64 border-l-8 border-l-slate-300 opacity-60 grayscale group">
+                  {/* 3. AI COMPANION BUDDY PORTAL (Active) */}
+                  <CartoonCard color="white" className="flex flex-col justify-between h-64 border-l-8 border-l-rose-450 shadow-cartoon hover:shadow-cartoon-hover hover:scale-102 transition-all group">
                     <div>
                       <div className="flex justify-between items-start mb-2">
                         <span className="text-3xl">🗣️</span>
-                        <span className="text-[10px] bg-slate-100 border text-slate-400 px-2.5 py-0.5 rounded-full font-bold">
-                          COMING SOON
+                        <span className="text-[10px] bg-rose-100 border border-rose-350 text-rose-800 px-2.5 py-0.5 rounded-full font-bold">
+                          ACTIVE PORTAL
                         </span>
                       </div>
-                      <h4 className="font-extrabold text-lg text-slate-400 leading-snug">
-                        AI Language Buddy
+                      <h4 className="font-extrabold text-lg text-slate-800 group-hover:text-rose-500 transition-colors leading-snug">
+                        AI Companion & Language Buddy
                       </h4>
-                      <p className="text-xs text-slate-400 font-medium mt-1.5 leading-relaxed">
-                        Learn spellings, write descriptive essays, and participate in funny story challenges with our interactive tutor Sparky!
+                      <p className="text-xs text-slate-500 font-semibold mt-1.5 leading-relaxed">
+                        Practice spellings, chat with your cute interactive Buddy mascot, track learning metrics, and play relaxing break activities!
                       </p>
                     </div>
-                    <CartoonButton color="gray" disabled className="w-full cursor-not-allowed">
-                      Locked 🔒
+                    <CartoonButton 
+                      color="science" 
+                      onClick={() => {
+                        navigate('/companion');
+                        showNotification("🗣️ Entered the AI Companion Buddy workspace!");
+                      }}
+                      className="w-full"
+                    >
+                      Chat with Buddy 🚀
                     </CartoonButton>
                   </CartoonCard>
 
@@ -408,16 +526,66 @@ export default function App() {
             }}
           />
         } />
+
+        {/* Math AI Modular Routing Subtree */}
+        <Route path="/math/*" element={
+          <MathModule 
+            studentId="student_123"
+            onExit={() => {
+              navigate('/');
+              showNotification("🏠 Returned to Parent Hub Dashboard.");
+            }}
+          />
+        } />
+
+        {/* English AI Modular Routing Subtree */}
+        <Route path="/english-ai/*" element={
+          <EnglishAIModule 
+            studentId="student_123"
+            onExit={() => {
+              navigate('/');
+              showNotification("🏠 Returned to Parent Hub Dashboard.");
+            }}
+          />
+        } />
+
+        {/* AI Companion Modular Routing Subtree */}
+        <Route path="/companion/*" element={
+          <CompanionModule 
+            studentId="student_123"
+            onExit={() => {
+              navigate('/');
+              showNotification("🏠 Returned to Parent Hub Dashboard.");
+            }}
+          />
+        } />
+
+        {/* Logic AI Modular Routing Subtree */}
+        <Route path="/logic/*" element={
+          <LogicModule 
+            studentId="student_123"
+            onExit={() => {
+              navigate('/');
+              showNotification("🏠 Returned to Parent Hub Dashboard.");
+            }}
+          />
+        } />
       </Routes>
 
       {/* Floating AI Panels */}
       {location.pathname.startsWith('/stem') && 
        !location.pathname.startsWith('/stem/simulator') && 
        !location.pathname.includes('/stem/lessons/') && (
-        <AITutorPanel floating={true} studentId="student_123" grade="Grade 2" />
+        <AITutorPanel floating={true} studentId="student_123" grade={activeGrade} />
       )}
       {location.pathname.startsWith('/physical-activity') && (
-        <FitFriendPanel floating={true} studentId="student_123" grade="Grade 2" />
+        <FitFriendPanel floating={true} studentId="student_123" grade={activeGrade} />
+      )}
+      {location.pathname.startsWith('/math') && (
+        <MathMentorPanel floating={true} studentId="student_123" grade={activeGrade} />
+      )}
+      {location.pathname.startsWith('/logic') && (
+        <LogicLeapPanel floating={true} studentId="student_123" grade={activeGrade} />
       )}
     </div>
   );
