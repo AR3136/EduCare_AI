@@ -14,7 +14,7 @@ const VOCABULARY_WORDS = [
     meaning: "A crunchy round fruit that can be red, green, or yellow.",
     example: "I love eating a crunchy red apple.",
     category: "Food",
-    image: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400",
+    image: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=400&auto=format&fit=crop",
     gradeGroup: "easy",
     emoji: "🍎"
   },
@@ -23,7 +23,7 @@ const VOCABULARY_WORDS = [
     meaning: "A long yellow fruit that is sweet and soft inside.",
     example: "Peel the banana before you eat it.",
     category: "Food",
-    image: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400",
+    image: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=400&auto=format&fit=crop",
     gradeGroup: "easy",
     emoji: "🍌"
   },
@@ -32,7 +32,7 @@ const VOCABULARY_WORDS = [
     meaning: "A healthy white liquid we drink to build strong bones.",
     example: "I drink a glass of fresh milk every morning.",
     category: "Food",
-    image: "https://images.unsplash.com/photo-1563636619-e9143da7973b?w=400",
+    image: "https://images.unsplash.com/photo-1550583724-b2692b85b150?w=400&auto=format&fit=crop",
     gradeGroup: "easy",
     emoji: "🥛"
   },
@@ -41,7 +41,7 @@ const VOCABULARY_WORDS = [
     meaning: "A round citrus fruit with a sweet and sour juice.",
     example: "He drank a glass of freshly squeezed orange juice.",
     category: "Food",
-    image: "https://images.unsplash.com/photo-1547514701-42782101795e?w=400",
+    image: "https://images.unsplash.com/photo-1547514701-42782101795e?w=400&auto=format&fit=crop",
     gradeGroup: "easy",
     emoji: "🍊"
   },
@@ -50,7 +50,7 @@ const VOCABULARY_WORDS = [
     meaning: "A small, sweet round fruit that grows in clusters on vines.",
     example: "She popped a juicy purple grape into her mouth.",
     category: "Food",
-    image: "https://images.unsplash.com/photo-1601275868399-45bec4f4cd9d?w=400",
+    image: "https://images.unsplash.com/photo-1423483641154-5411ec9c0ddf?w=400&auto=format&fit=crop",
     gradeGroup: "easy",
     emoji: "🍇"
   },
@@ -59,7 +59,7 @@ const VOCABULARY_WORDS = [
     meaning: "A sweet baked dessert often decorated with frosting for birthdays.",
     example: "We blew out the candles on the birthday cake.",
     category: "Food",
-    image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400",
+    image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400&auto=format&fit=crop",
     gradeGroup: "easy",
     emoji: "🍰"
   },
@@ -68,7 +68,7 @@ const VOCABULARY_WORDS = [
     meaning: "A fluffy pet animal that says meow and chases mice.",
     example: "The orange cat is sleeping on the rug.",
     category: "Animals",
-    image: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400",
+    image: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&auto=format&fit=crop",
     gradeGroup: "easy",
     emoji: "🐱"
   },
@@ -77,7 +77,7 @@ const VOCABULARY_WORDS = [
     meaning: "A friendly pet animal that barks and wags its tail.",
     example: "Our dog Buddy loves to play catch with a ball.",
     category: "Animals",
-    image: "https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=400",
+    image: "https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&auto=format&fit=crop",
     gradeGroup: "easy",
     emoji: "🐶"
   },
@@ -86,7 +86,7 @@ const VOCABULARY_WORDS = [
     meaning: "A large wild cat known as the king of the jungle.",
     example: "The brave lion let out a loud roar.",
     category: "Animals",
-    image: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=400",
+    image: "https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=400&auto=format&fit=crop",
     gradeGroup: "easy",
     emoji: "🦁"
   },
@@ -95,7 +95,7 @@ const VOCABULARY_WORDS = [
     meaning: "A farm animal that eats grass and provides us with milk.",
     example: "The black and white cow stood in the green field.",
     category: "Animals",
-    image: "https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=400",
+    image: "https://images.unsplash.com/photo-1527153857715-3908f2bae5e8?w=400&auto=format&fit=crop",
     gradeGroup: "easy",
     emoji: "🐄"
   },
@@ -104,7 +104,7 @@ const VOCABULARY_WORDS = [
     meaning: "A water bird with webbed feet that makes a quack sound.",
     example: "The yellow duck is swimming in the pond.",
     category: "Animals",
-    image: "https://images.unsplash.com/photo-1530595467537-0b5996c41f2d?w=400",
+    image: "https://images.unsplash.com/photo-1548550023-2bdb3c5beed7?w=400&auto=format&fit=crop",
     gradeGroup: "easy",
     emoji: "🦆"
   },
@@ -113,7 +113,7 @@ const VOCABULARY_WORDS = [
     meaning: "A feathered animal with wings that can fly in the sky.",
     example: "A blue bird is singing on the tree branch.",
     category: "Animals",
-    image: "https://images.unsplash.com/photo-1444464666168-49d633b86797?w=400",
+    image: "https://images.unsplash.com/photo-1444464666168-49d633b86797?w=400&auto=format&fit=crop",
     gradeGroup: "easy",
     emoji: "🐦"
   },
@@ -122,7 +122,7 @@ const VOCABULARY_WORDS = [
     meaning: "Pages bound together that tell a story or teach things.",
     example: "I am reading a story book about space.",
     category: "School",
-    image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400",
+    image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=400&auto=format&fit=crop",
     gradeGroup: "easy",
     emoji: "📖"
   },
@@ -131,7 +131,7 @@ const VOCABULARY_WORDS = [
     meaning: "A wooden tool with graphite used for writing or drawing.",
     example: "Use your yellow pencil to write your name.",
     category: "School",
-    image: "https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?w=400",
+    image: "https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=400&auto=format&fit=crop",
     gradeGroup: "easy",
     emoji: "✏️"
   },
@@ -140,7 +140,7 @@ const VOCABULARY_WORDS = [
     meaning: "A flat table where we sit to read, write, or work.",
     example: "Place your notebook neatly on your desk.",
     category: "School",
-    image: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=400",
+    image: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=400&auto=format&fit=crop",
     gradeGroup: "easy",
     emoji: "🏫"
   },
@@ -149,7 +149,7 @@ const VOCABULARY_WORDS = [
     meaning: "A flexible container used to carry school supplies and books.",
     example: "She packed her pencils and notebooks into her bag.",
     category: "School",
-    image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400",
+    image: "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=400&auto=format&fit=crop",
     gradeGroup: "easy",
     emoji: "🎒"
   },
@@ -158,7 +158,7 @@ const VOCABULARY_WORDS = [
     meaning: "A straight strip of wood or plastic used to measure distance.",
     example: "He drew a straight line using his wooden ruler.",
     category: "School",
-    image: "https://images.unsplash.com/photo-1579762593175-20226054cad0?w=400",
+    image: "https://images.unsplash.com/photo-1609042597870-c78dbe99d6b6?w=400&auto=format&fit=crop",
     gradeGroup: "easy",
     emoji: "📏"
   },
@@ -167,7 +167,7 @@ const VOCABULARY_WORDS = [
     meaning: "A road vehicle with four wheels powered by an engine.",
     example: "My family drives a blue car to the park.",
     category: "Travel",
-    image: "https://images.unsplash.com/photo-1494976388531-d1058494cdd8?w=400",
+    image: "https://images.unsplash.com/photo-1502877338535-766e1452684a?w=400&auto=format&fit=crop",
     gradeGroup: "easy",
     emoji: "🚗"
   },
@@ -176,7 +176,7 @@ const VOCABULARY_WORDS = [
     meaning: "A large motor vehicle designed to carry many passengers.",
     example: "The yellow school bus stops at our corner.",
     category: "Travel",
-    image: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400",
+    image: "https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?w=400&auto=format&fit=crop",
     gradeGroup: "easy",
     emoji: "🚌"
   },
@@ -185,7 +185,7 @@ const VOCABULARY_WORDS = [
     meaning: "A series of connected railway carriages pulled by an engine.",
     example: "The train clicked along the steel tracks.",
     category: "Travel",
-    image: "https://images.unsplash.com/photo-1474487548417-781cb71495f3?w=400",
+    image: "https://images.unsplash.com/photo-1474487548417-781cb71495f3?w=400&auto=format&fit=crop",
     gradeGroup: "easy",
     emoji: "🚆"
   },
@@ -194,7 +194,7 @@ const VOCABULARY_WORDS = [
     meaning: "A small vehicle for traveling on water like lakes or rivers.",
     example: "We went fishing in a small wooden boat.",
     category: "Travel",
-    image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=400",
+    image: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=400&auto=format&fit=crop",
     gradeGroup: "easy",
     emoji: "⛵"
   },
@@ -203,7 +203,7 @@ const VOCABULARY_WORDS = [
     meaning: "A two-wheeled vehicle you ride by pushing foot pedals.",
     example: "She rode her new bike around the playground.",
     category: "Travel",
-    image: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=400",
+    image: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=400&auto=format&fit=crop",
     gradeGroup: "easy",
     emoji: "🚲"
   },
@@ -212,7 +212,7 @@ const VOCABULARY_WORDS = [
     meaning: "A device used to speak to people far away.",
     example: "She called her grandmother on the phone.",
     category: "Technology",
-    image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400",
+    image: "https://images.unsplash.com/photo-1585060544812-6b45742d762f?w=400&auto=format&fit=crop",
     gradeGroup: "easy",
     emoji: "📞"
   },
@@ -221,7 +221,7 @@ const VOCABULARY_WORDS = [
     meaning: "A screen that shows moving pictures and sounds.",
     example: "We watch educational cartoons on the TV.",
     category: "Technology",
-    image: "https://images.unsplash.com/photo-1593305841991-05c297ba4575?w=400",
+    image: "https://images.unsplash.com/photo-1593305841991-05c297ba4575?w=400&auto=format&fit=crop",
     gradeGroup: "easy",
     emoji: "📺"
   },
@@ -230,7 +230,7 @@ const VOCABULARY_WORDS = [
     meaning: "A tool that shows what time of day it is.",
     example: "The wall clock says it is exactly three o'clock.",
     category: "Technology",
-    image: "https://images.unsplash.com/photo-1563861826100-9cb868fdbe1c?w=400",
+    image: "https://images.unsplash.com/photo-1508057198894-247b23fe5ade?w=400&auto=format&fit=crop",
     gradeGroup: "easy",
     emoji: "⏰"
   },
@@ -239,7 +239,7 @@ const VOCABULARY_WORDS = [
     meaning: "A device that plays music, news, and stories through sound waves.",
     example: "My grandfather listens to local news on his old radio.",
     category: "Technology",
-    image: "https://images.unsplash.com/photo-1593079831268-3381b0db4a77?w=400",
+    image: "https://images.unsplash.com/photo-1603539947678-cd3954ed515d?w=400&auto=format&fit=crop",
     gradeGroup: "easy",
     emoji: "📻"
   },
@@ -250,7 +250,7 @@ const VOCABULARY_WORDS = [
     meaning: "A dairy food made from pressed milk curds.",
     example: "I love melty yellow cheese on my sandwich.",
     category: "Food",
-    image: "https://images.unsplash.com/photo-1486299267070-83823f5448dd?w=400",
+    image: "https://images.unsplash.com/photo-1452195100486-9cc805987862?w=400&auto=format&fit=crop",
     gradeGroup: "medium",
     emoji: "🧀"
   },
@@ -259,7 +259,7 @@ const VOCABULARY_WORDS = [
     meaning: "A sweet, sticky golden liquid made by busy honeybees.",
     example: "Drizzle some honey onto your warm oatmeal.",
     category: "Food",
-    image: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=400",
+    image: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=400&auto=format&fit=crop",
     gradeGroup: "medium",
     emoji: "🍯"
   },
@@ -268,7 +268,7 @@ const VOCABULARY_WORDS = [
     meaning: "A healthy mixture of raw vegetables or fresh fruits.",
     example: "A fresh green salad with cucumbers is refreshing.",
     category: "Food",
-    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400",
+    image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&auto=format&fit=crop",
     gradeGroup: "medium",
     emoji: "🥗"
   },
@@ -277,7 +277,7 @@ const VOCABULARY_WORDS = [
     meaning: "A solid yellow dairy product made by churning cream or milk.",
     example: "She spread creamy butter on the warm toast.",
     category: "Food",
-    image: "https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=400",
+    image: "https://images.unsplash.com/photo-1589985270826-4b7bb135bc9d?w=400&auto=format&fit=crop",
     gradeGroup: "medium",
     emoji: "🧈"
   },
@@ -286,7 +286,7 @@ const VOCABULARY_WORDS = [
     meaning: "A sweet tropical fruit with a yellow-orange flesh and a large seed.",
     example: "We sliced a fresh mango for our afternoon snack.",
     category: "Food",
-    image: "https://images.unsplash.com/photo-1553279768-865429fa0078?w=400",
+    image: "https://images.unsplash.com/photo-1553279768-865429fa0078?w=400&auto=format&fit=crop",
     gradeGroup: "medium",
     emoji: "🥭"
   },
@@ -295,7 +295,7 @@ const VOCABULARY_WORDS = [
     meaning: "A small baked sweet treat, often containing chocolate chips.",
     example: "Grandma baked a batch of chocolate chip cookies.",
     category: "Food",
-    image: "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=400",
+    image: "https://images.unsplash.com/photo-1499636136210-6f4ee915583e?w=400&auto=format&fit=crop",
     gradeGroup: "medium",
     emoji: "🍪"
   },
@@ -304,7 +304,7 @@ const VOCABULARY_WORDS = [
     meaning: "A very large wild mammal with thick skin, tusks, and a trunk.",
     example: "The elephant sprayed water over its back with its trunk.",
     category: "Animals",
-    image: "https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=400",
+    image: "https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=400&auto=format&fit=crop",
     gradeGroup: "medium",
     emoji: "🐘"
   },
@@ -313,7 +313,7 @@ const VOCABULARY_WORDS = [
     meaning: "A highly intelligent aquatic mammal that breathes air.",
     example: "The dolphin leaped high out of the sparkling ocean waves.",
     category: "Animals",
-    image: "https://images.unsplash.com/photo-1551244072-5d12893278ab?w=400",
+    image: "https://images.unsplash.com/photo-1568430462989-44163eb1752f?w=400&auto=format&fit=crop",
     gradeGroup: "medium",
     emoji: "🐬"
   },
@@ -322,7 +322,7 @@ const VOCABULARY_WORDS = [
     meaning: "A tall African mammal with a very long neck and patterned coat.",
     example: "The giraffe reached high to eat leaves from the tall trees.",
     category: "Animals",
-    image: "https://images.unsplash.com/photo-1547721064-da6cfb341d50?w=400",
+    image: "https://images.unsplash.com/photo-1547721064-da6cfb341d50?w=400&auto=format&fit=crop",
     gradeGroup: "medium",
     emoji: "🦒"
   },
@@ -331,7 +331,7 @@ const VOCABULARY_WORDS = [
     meaning: "A flightless sea bird of the southern hemisphere with black-and-white plumage.",
     example: "The emperor penguin waddled across the frozen ice sheets.",
     category: "Animals",
-    image: "https://images.unsplash.com/photo-1517783999520-f068d7431a60?w=400",
+    image: "https://images.unsplash.com/photo-1551986782-d0169b3f8fa7?w=400&auto=format&fit=crop",
     gradeGroup: "medium",
     emoji: "🐧"
   },
@@ -340,7 +340,7 @@ const VOCABULARY_WORDS = [
     meaning: "A clever wild animal with a long tail that climbs trees.",
     example: "The mischievous monkey swung from branch to branch.",
     category: "Animals",
-    image: "https://images.unsplash.com/photo-1540573133985-87b6da6d54a9?w=400",
+    image: "https://images.unsplash.com/photo-1540573133985-87b6da6d54a9?w=400&auto=format&fit=crop",
     gradeGroup: "medium",
     emoji: "🐒"
   },
@@ -349,7 +349,7 @@ const VOCABULARY_WORDS = [
     meaning: "An Australian mammal with strong hind legs for hopping.",
     example: "The mother kangaroo carried her small joey in her pouch.",
     category: "Animals",
-    image: "https://images.unsplash.com/photo-1531310197839-ccf54634509e?w=400",
+    image: "https://images.unsplash.com/photo-1574068468668-a05a11f871da?w=400&auto=format&fit=crop",
     gradeGroup: "medium",
     emoji: "🦘"
   },
@@ -358,7 +358,7 @@ const VOCABULARY_WORDS = [
     meaning: "A guide who helps students gain knowledge and skills.",
     example: "Our school teacher taught us about history today.",
     category: "School",
-    image: "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=400",
+    image: "https://images.unsplash.com/photo-1577896851231-70ef18881754?w=400&auto=format&fit=crop",
     gradeGroup: "medium",
     emoji: "👩‍🏫"
   },
@@ -367,7 +367,7 @@ const VOCABULARY_WORDS = [
     meaning: "A room containing collections of books and resources to read.",
     example: "The community library is a quiet place to read.",
     category: "School",
-    image: "https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=400",
+    image: "https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=400&auto=format&fit=crop",
     gradeGroup: "medium",
     emoji: "🏛️"
   },
@@ -376,7 +376,7 @@ const VOCABULARY_WORDS = [
     meaning: "A spherical representation of the Earth or sky map.",
     example: "Spin the globe to locate where we live.",
     category: "School",
-    image: "https://images.unsplash.com/photo-1524661135-423995f22d0b?w=400",
+    image: "https://images.unsplash.com/photo-1589519160732-576f165b9c74?w=400&auto=format&fit=crop",
     gradeGroup: "medium",
     emoji: "🌐"
   },
@@ -385,7 +385,7 @@ const VOCABULARY_WORDS = [
     meaning: "An electronic tool used for solving math calculations.",
     example: "We solved the long division problem using a calculator.",
     category: "School",
-    image: "https://images.unsplash.com/photo-1587145820266-a5951ee6f620?w=400",
+    image: "https://images.unsplash.com/photo-1564939558297-fc396f18e5c7?w=400&auto=format&fit=crop",
     gradeGroup: "medium",
     emoji: "🧮"
   },
@@ -394,7 +394,7 @@ const VOCABULARY_WORDS = [
     meaning: "A book with blank pages for writing down school notes.",
     example: "He wrote down the science vocabulary in his notebook.",
     category: "School",
-    image: "https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=400",
+    image: "https://images.unsplash.com/photo-1531346878377-a5be20888e57?w=400&auto=format&fit=crop",
     gradeGroup: "medium",
     emoji: "📓"
   },
@@ -403,7 +403,7 @@ const VOCABULARY_WORDS = [
     meaning: "A large powered flying vehicle with fixed wings.",
     example: "The silver airplane soared above the puffy white clouds.",
     category: "Travel",
-    image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400",
+    image: "https://images.unsplash.com/photo-1436491865332-7a61a109cc05?w=400&auto=format&fit=crop",
     gradeGroup: "medium",
     emoji: "✈️"
   },
@@ -412,7 +412,7 @@ const VOCABULARY_WORDS = [
     meaning: "A light vehicle with two wheels that you pedal with your feet.",
     example: "I ride my red bicycle around the neighborhood track.",
     category: "Travel",
-    image: "https://images.unsplash.com/photo-1485965120184-e220f721d03e?w=400",
+    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&auto=format&fit=crop",
     gradeGroup: "medium",
     emoji: "🚲"
   },
@@ -421,7 +421,7 @@ const VOCABULARY_WORDS = [
     meaning: "Bags and suitcases packed for a trip or holiday travel.",
     example: "We loaded our heavy luggage into the car trunk.",
     category: "Travel",
-    image: "https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?w=400",
+    image: "https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?w=400&auto=format&fit=crop",
     gradeGroup: "medium",
     emoji: "🧳"
   },
@@ -430,7 +430,7 @@ const VOCABULARY_WORDS = [
     meaning: "An aircraft with overhead rotating blades that can hover in place.",
     example: "The rescue helicopter landed safely on the hospital roof.",
     category: "Travel",
-    image: "https://images.unsplash.com/photo-1508962914676-134849a727f0?w=400",
+    image: "https://images.unsplash.com/photo-1540962351504-03099e0a754b?w=400&auto=format&fit=crop",
     gradeGroup: "medium",
     emoji: "🚁"
   },
@@ -439,7 +439,7 @@ const VOCABULARY_WORDS = [
     meaning: "An underground railway system for rapid transport in cities.",
     example: "We took the fast subway to reach the downtown museum.",
     category: "Travel",
-    image: "https://images.unsplash.com/photo-1519501025264-65ba15a82390?w=400",
+    image: "https://images.unsplash.com/photo-1617360564500-c5a01f74b5c9?w=400&auto=format&fit=crop",
     gradeGroup: "medium",
     emoji: "🚇"
   },
@@ -448,7 +448,7 @@ const VOCABULARY_WORDS = [
     meaning: "An electronic machine that stores, processes, and displays data.",
     example: "We use a desktop computer to search for science projects.",
     category: "Technology",
-    image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400",
+    image: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=400&auto=format&fit=crop",
     gradeGroup: "medium",
     emoji: "💻"
   },
@@ -457,7 +457,7 @@ const VOCABULARY_WORDS = [
     meaning: "A flat, portable computer with a touchscreen display.",
     example: "The tablet lets me draw digital pictures with a stylus.",
     category: "Technology",
-    image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400",
+    image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=400&auto=format&fit=crop",
     gradeGroup: "medium",
     emoji: "📱"
   },
@@ -466,7 +466,7 @@ const VOCABULARY_WORDS = [
     meaning: "A device used to capture photographs or record videos.",
     example: "She pointed the camera to take a photo of the sunrise.",
     category: "Technology",
-    image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400",
+    image: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?w=400&auto=format&fit=crop",
     gradeGroup: "medium",
     emoji: "📷"
   },
@@ -475,7 +475,7 @@ const VOCABULARY_WORDS = [
     meaning: "A folding, portable computer that is convenient to travel with.",
     example: "My father works on his laptop computer while on the train.",
     category: "Technology",
-    image: "https://images.unsplash.com/photo-1488590528505-98d2b5aba04b?w=400",
+    image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=400&auto=format&fit=crop",
     gradeGroup: "medium",
     emoji: "💻"
   },
@@ -484,7 +484,7 @@ const VOCABULARY_WORDS = [
     meaning: "A pair of small speakers worn on the ears to listen to private audio.",
     example: "She plugged in her headphones to listen to the audio story.",
     category: "Technology",
-    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400",
+    image: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&auto=format&fit=crop",
     gradeGroup: "medium",
     emoji: "🎧"
   },
@@ -495,7 +495,7 @@ const VOCABULARY_WORDS = [
     meaning: "The distinct food elements combined to prepare a dish.",
     example: "Flour, sugar, and butter are key baking ingredients.",
     category: "Food",
-    image: "https://images.unsplash.com/photo-1505576399279-565b52d4ac71?w=400",
+    image: "https://images.unsplash.com/photo-1466637574441-749b8f19452f?w=400&auto=format&fit=crop",
     gradeGroup: "hard",
     emoji: "🥣"
   },
@@ -504,7 +504,7 @@ const VOCABULARY_WORDS = [
     meaning: "Containing vitamins and minerals that promote health and growth.",
     example: "Vegetables and nuts are highly nutritious snacks.",
     category: "Food",
-    image: "https://images.unsplash.com/photo-1498837167922-ddd27525d352?w=400",
+    image: "https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=400&auto=format&fit=crop",
     gradeGroup: "hard",
     emoji: "🥗"
   },
@@ -513,7 +513,7 @@ const VOCABULARY_WORDS = [
     meaning: "Plants and plant life considered collectively in a particular area.",
     example: "The tropical rainforest is known for its lush, green vegetation.",
     category: "Food",
-    image: "https://images.unsplash.com/photo-1535254973040-607b474cb50d?w=400",
+    image: "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?w=400&auto=format&fit=crop",
     gradeGroup: "hard",
     emoji: "🌿"
   },
@@ -522,7 +522,7 @@ const VOCABULARY_WORDS = [
     meaning: "A substance used to prevent food from decaying or spoiling.",
     example: "Many canned foods contain natural preservatives like salt.",
     category: "Food",
-    image: "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=400",
+    image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?w=400&auto=format&fit=crop",
     gradeGroup: "hard",
     emoji: "🥫"
   },
@@ -531,7 +531,7 @@ const VOCABULARY_WORDS = [
     meaning: "Disguising coloring or patterns that help blend into surroundings.",
     example: "A chameleon uses camouflage to hide from forest predators.",
     category: "Animals",
-    image: "https://images.unsplash.com/photo-1504450874802-0ba2bcd9b5ae?w=400",
+    image: "https://images.unsplash.com/photo-1504450874802-0ba2bcd9b5ae?w=400&auto=format&fit=crop",
     gradeGroup: "hard",
     emoji: "🦎"
   },
@@ -540,7 +540,7 @@ const VOCABULARY_WORDS = [
     meaning: "Seasonal movement of animals from one region to another.",
     example: "Monarch butterfly migration covers thousands of miles.",
     category: "Animals",
-    image: "https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=400",
+    image: "https://images.unsplash.com/photo-1516908205727-40afad9449a8?w=400&auto=format&fit=crop",
     gradeGroup: "hard",
     emoji: "🦅"
   },
@@ -549,16 +549,16 @@ const VOCABULARY_WORDS = [
     meaning: "An animal that naturally preys on other animals for food.",
     example: "The tiger is a fierce predator hunting in the tall grass.",
     category: "Animals",
-    image: "https://images.unsplash.com/photo-1602491453631-e2a5ad90a131?w=400",
+    image: "https://images.unsplash.com/photo-1561731216-c3a4d99437d5?w=400&auto=format&fit=crop",
     gradeGroup: "hard",
     emoji: "🐅"
   },
   {
     word: "Herbivore",
-    meaning: "An animal that feeds primary or exclusively on plants.",
+    meaning: "An animal that feeds primarily or exclusively on plants.",
     example: "Koalas and deer are herbivores that feed on leaves and twigs.",
     category: "Animals",
-    image: "https://images.unsplash.com/photo-1507608869274-d3177c8bb4c7?w=400",
+    image: "https://images.unsplash.com/photo-1484406566174-9da000fda645?w=400&auto=format&fit=crop",
     gradeGroup: "hard",
     emoji: "🦌"
   },
@@ -567,7 +567,7 @@ const VOCABULARY_WORDS = [
     meaning: "The ceremony of receiving a diploma or completing school.",
     example: "The class celebrated their elementary school graduation.",
     category: "School",
-    image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400",
+    image: "https://images.unsplash.com/photo-1541339907198-e08756dedf3f?w=400&auto=format&fit=crop",
     gradeGroup: "hard",
     emoji: "🎓"
   },
@@ -576,7 +576,7 @@ const VOCABULARY_WORDS = [
     meaning: "A scientific test carried out to learn or prove a hypothesis.",
     example: "Our chemistry class performed a water purification experiment.",
     category: "School",
-    image: "https://images.unsplash.com/photo-1532187643603-ba119ca4109e?w=400",
+    image: "https://images.unsplash.com/photo-1532187643603-ba119ca4109e?w=400&auto=format&fit=crop",
     gradeGroup: "hard",
     emoji: "🧪"
   },
@@ -585,7 +585,7 @@ const VOCABULARY_WORDS = [
     meaning: "The subjects comprising a complete course of study in school.",
     example: "The elementary school curriculum includes mathematics and science.",
     category: "School",
-    image: "https://images.unsplash.com/photo-1506784983877-45594efa4cbe?w=400",
+    image: "https://images.unsplash.com/photo-1497633762265-9d179a990aa6?w=400&auto=format&fit=crop",
     gradeGroup: "hard",
     emoji: "📚"
   },
@@ -594,7 +594,7 @@ const VOCABULARY_WORDS = [
     meaning: "A financial grant awarded to support a student's education.",
     example: "She earned a prestigious scholarship for her science invention.",
     category: "School",
-    image: "https://images.unsplash.com/photo-1427504494785-3a9ca7044f45?w=400",
+    image: "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&auto=format&fit=crop",
     gradeGroup: "hard",
     emoji: "🏆"
   },
@@ -603,7 +603,7 @@ const VOCABULARY_WORDS = [
     meaning: "The final place to which someone or something is traveling.",
     example: "Our vacation destination was a tropical island.",
     category: "Travel",
-    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400",
+    image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&auto=format&fit=crop",
     gradeGroup: "hard",
     emoji: "🏝️"
   },
@@ -612,7 +612,7 @@ const VOCABULARY_WORDS = [
     meaning: "A journey undertaken by a group with a specific research goal.",
     example: "The scientists embarked on a polar ocean expedition.",
     category: "Travel",
-    image: "https://images.unsplash.com/photo-1527631746610-bca00a040d60?w=400",
+    image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=400&auto=format&fit=crop",
     gradeGroup: "hard",
     emoji: "🏔️"
   },
@@ -621,7 +621,7 @@ const VOCABULARY_WORDS = [
     meaning: "The skill or process of plotting and directing a vehicle's route.",
     example: "The sailor used compass navigation to cross the ocean.",
     category: "Travel",
-    image: "https://images.unsplash.com/photo-1530982011887-3cc11cc85693?w=400",
+    image: "https://images.unsplash.com/photo-1569230919100-d3fd5e1132f4?w=400&auto=format&fit=crop",
     gradeGroup: "hard",
     emoji: "🧭"
   },
@@ -630,7 +630,7 @@ const VOCABULARY_WORDS = [
     meaning: "A detailed plan or route for a travel trip or journey.",
     example: "Our travel itinerary included three cities and five museums.",
     category: "Travel",
-    image: "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=400",
+    image: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=400&auto=format&fit=crop",
     gradeGroup: "hard",
     emoji: "📅"
   },
@@ -639,7 +639,7 @@ const VOCABULARY_WORDS = [
     meaning: "A touchscreen mobile phone with internet access and applications.",
     example: "I use a smartphone to check weather forecasts.",
     category: "Technology",
-    image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400",
+    image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=400&auto=format&fit=crop",
     gradeGroup: "hard",
     emoji: "📱"
   },
@@ -648,7 +648,7 @@ const VOCABULARY_WORDS = [
     meaning: "A form of energy resulting from the flow of charged particles.",
     example: "Lightning is a powerful natural display of electricity.",
     category: "Technology",
-    image: "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=400",
+    image: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=400&auto=format&fit=crop",
     gradeGroup: "hard",
     emoji: "⚡"
   },
@@ -657,7 +657,7 @@ const VOCABULARY_WORDS = [
     meaning: "The use of automatic machinery and technology to perform tasks.",
     example: "Factory automation increases productivity and speed.",
     category: "Technology",
-    image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400",
+    image: "https://images.unsplash.com/photo-1485827404703-89b55fcc595e?w=400&auto=format&fit=crop",
     gradeGroup: "hard",
     emoji: "🤖"
   },
@@ -666,7 +666,7 @@ const VOCABULARY_WORDS = [
     meaning: "The practice of protecting electronic devices and networks from attacks.",
     example: "A strong firewall is essential for office cybersecurity.",
     category: "Technology",
-    image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=400",
+    image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=400&auto=format&fit=crop",
     gradeGroup: "hard",
     emoji: "🔒"
   }
